@@ -114,7 +114,7 @@ const RegistrationForm = () => {
                         control={form.control}
                         name="codeName"
                         render={({ field }) => (
-                            <FormItem className="mb-3">
+                            <FormItem className="mb-4">
                                 <FormLabel className="font-bold">Code Name</FormLabel>
                                 <FormControl>
                                     <Input placeholder="Enter your code name" {...field} />

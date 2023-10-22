@@ -29,6 +29,7 @@ const Home = () => {
       {isLoggedIn ? ( // Check the login status to conditionally render content
         <div>
           {/* Render content for logged-in users, e.g., user dashboard */}
+          <p>Logged in</p>
         </div>
       ) : (
         <Tabs defaultValue="login">

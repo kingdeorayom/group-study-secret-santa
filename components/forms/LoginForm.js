@@ -11,6 +11,7 @@ import { Loader2, XCircle } from "lucide-react"
 import { useState } from "react"
 import { Checkbox } from "@/components/ui/checkbox"
 import axios from "axios"
+import { useRouter } from 'next/navigation'
 
 const FormSchema = z.object({
     codeName: z.string().min(4, {
@@ -22,6 +23,8 @@ const FormSchema = z.object({
 })
 
 const LoginForm = () => {
+
+    const router = useRouter()
 
     const form = useForm({
         resolver: zodResolver(FormSchema),
@@ -49,7 +52,7 @@ const LoginForm = () => {
             if (response.status === 200) {
                 setLoginError(null);
                 setIsSubmitting(false);
-                localStorage.setItem('token', response.data.token);
+                localStorage.setItem('secretsanta', response.data.token);
                 alert("Logged in successfully");
                 // Redirect to a protected route or dashboard
                 // Example: history.push('/dashboard');

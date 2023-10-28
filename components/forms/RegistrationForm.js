@@ -54,7 +54,7 @@ const RegistrationForm = () => {
                 setRegistrationSuccess(true);
                 setRegistrationError(null);
                 setIsSubmitting(false);
-                localStorage.setItem('secretsanta', response.data.token);
+                localStorage.setItem('secret-santa-login-token', response.data.token);
                 // Redirect to a protected route or dashboard
                 // Example: history.push('/dashboard');
             }

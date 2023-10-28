@@ -52,7 +52,7 @@ const LoginForm = () => {
             if (response.status === 200) {
                 setLoginError(null);
                 setIsSubmitting(false);
-                localStorage.setItem('secretsanta', response.data.token);
+                localStorage.setItem('secret-santa-login-token', response.data.token);
                 alert("Logged in successfully");
                 // Redirect to a protected route or dashboard
                 // Example: history.push('/dashboard');

@@ -13,7 +13,7 @@ const Home = () => {
 
   useEffect(() => {
     const loadingTimer = setTimeout(() => {
-      const token = localStorage.getItem('secretsanta');
+      const token = localStorage.getItem('secret-santa-login-token');
       if (token) {
         setIsLoggedIn(true);
       } else {

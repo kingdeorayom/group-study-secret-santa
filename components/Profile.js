@@ -168,7 +168,7 @@ const Profile = ({ isLoggedIn, setIsLoggedIn, router }) => {
                                                 <div>
                                                     <Image
                                                         src={question_flatline}
-                                                        className='w-48 h-32 object-cover'
+                                                        className='w-48 h-32 object-cover mb-2'
                                                         alt='Question Flatline'
                                                     />
                                                     <Label className="text-sm font-light">

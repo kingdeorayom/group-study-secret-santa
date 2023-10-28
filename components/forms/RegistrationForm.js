@@ -11,6 +11,8 @@ import { CheckCircle, Loader2, Megaphone, XCircle } from "lucide-react"
 import { Checkbox } from "../ui/checkbox"
 import { useState } from "react"
 import axios from "axios"
+import { useAuth } from "@/context/AuthContext"
+import { useRouter } from "next/navigation"
 
 const FormSchema = z.object({
     name: z.string().min(2, {
@@ -26,19 +28,23 @@ const FormSchema = z.object({
 
 const RegistrationForm = () => {
 
+    const router = useRouter()
+
+    const { setIsLoggedIn } = useAuth();
+
     const form = useForm({
         resolver: zodResolver(FormSchema),
         defaultValues: {
-            name: "Secret Santa 1",
-            codeName: "SecretSanta1",
-            password: "Serkingd28;",
+            name: "Serking de Orayom",
+            codeName: "kingdeorayom",
+            password: "Serking28;",
         },
     })
 
     const [isPasswordShown, setIsPasswordShown] = useState(false);
-    const [registrationError, setRegistrationError] = useState(null); // State to hold login error message
-    const [registrationSuccess, setRegistrationSuccess] = useState(false); // State to track registration success
-    const [isSubmitting, setIsSubmitting] = useState(false); // State to track submission status
+    const [registrationError, setRegistrationError] = useState(null);
+    const [registrationSuccess, setRegistrationSuccess] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const togglePassword = () => setIsPasswordShown(!isPasswordShown);
 
@@ -55,10 +61,11 @@ const RegistrationForm = () => {
                 setRegistrationError(null);
                 setIsSubmitting(false);
                 localStorage.setItem('secret-santa-login-token', response.data.token);
-                // Redirect to a protected route or dashboard
+                setIsLoggedIn(true);
                 router.push('/home')
             }
         } catch (error) {
+            console.log(error)
             setRegistrationError(error.response.data.message);
             setRegistrationSuccess(false);
             setIsSubmitting(false);
@@ -73,7 +80,7 @@ const RegistrationForm = () => {
             {
                 registrationSuccess && (
                     <Alert className="mt-5 mb-5">
-                        <CheckCircle className="h-4 w-4" /> {/* Assuming you have an icon like this for success */}
+                        <CheckCircle className="h-4 w-4" />
                         <AlertTitle className="font-bold">Registration Successful</AlertTitle>
                         <AlertDescription className="">
                             You have successfully registered for an account. Please proceed to login to continue.
@@ -83,7 +90,7 @@ const RegistrationForm = () => {
             }
 
             {
-                registrationError && ( // Display the alert only if there is an error
+                registrationError && (
                     <Alert className="mt-5 mb-5">
                         <XCircle className="h-4 w-4" />
                         <AlertTitle className="font-bold">Oops!</AlertTitle>
@@ -155,8 +162,11 @@ const RegistrationForm = () => {
                     <Alert className="mt-7 mb-5">
                         <Megaphone className="h-4 w-4" />
                         <AlertTitle className="font-bold">Disclaimer</AlertTitle>
-                        <AlertDescription>
+                        {/* <AlertDescription>
                             Please note that I, Serking, is not liable for the data you provide, including your password, real name, or code name. Your information is kept secure, your password remain private to you, but you should exercise caution.
+                        </AlertDescription> */}
+                        <AlertDescription>
+                            I am <span className="font-bold">not</span> liable for the data you provide, including your password, real name, or code name. Your information is kept secure, your password <span className="font-bold">remain private to you</span>, but you should exercise caution.
                         </AlertDescription>
                     </Alert>
 

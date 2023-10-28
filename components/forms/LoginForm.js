@@ -12,6 +12,7 @@ import { useState } from "react"
 import { Checkbox } from "@/components/ui/checkbox"
 import axios from "axios"
 import { useRouter } from 'next/navigation'
+import { useAuth } from "@/context/AuthContext"
 
 const FormSchema = z.object({
     codeName: z.string().min(4, {
@@ -26,17 +27,19 @@ const LoginForm = () => {
 
     const router = useRouter()
 
+    const { setIsLoggedIn } = useAuth();
+
     const form = useForm({
         resolver: zodResolver(FormSchema),
         defaultValues: {
-            codeName: "SecretSanta1",
-            password: "Serkingd28;",
+            codeName: "kingdeorayom",
+            password: "Serking28;",
         },
     })
 
     const [isPasswordShown, setIsPasswordShown] = useState(false);
-    const [loginError, setLoginError] = useState(null); // State to hold login error message
-    const [isSubmitting, setIsSubmitting] = useState(false); // State to track submission status
+    const [loginError, setLoginError] = useState(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const togglePassword = () => setIsPasswordShown(!isPasswordShown);
 
@@ -53,15 +56,12 @@ const LoginForm = () => {
                 setLoginError(null);
                 setIsSubmitting(false);
                 localStorage.setItem('secret-santa-login-token', response.data.token);
-                // alert("Logged in successfully");
-                // Redirect to a protected route or dashboard
+                setIsLoggedIn(true)
                 router.push('/home')
             }
 
         } catch (error) {
-            console.log(error.response.data.message)
-            // Handle errors and display to the user
-            setLoginError(error.response.data.message); // Set the error message
+            setLoginError(error.response.data.message);
             setIsSubmitting(false);
         } finally {
             setIsSubmitting(false);
@@ -72,7 +72,7 @@ const LoginForm = () => {
         <div className="max-w-lg mx-auto">
 
             {
-                loginError && ( // Display the alert only if there is an error
+                loginError && (
                     <Alert className="mt-5 mb-5">
                         <XCircle className="h-4 w-4" />
                         <AlertTitle className="font-bold">Oops!</AlertTitle>

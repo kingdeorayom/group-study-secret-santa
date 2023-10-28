@@ -5,12 +5,14 @@ import Layout from "@/layouts/Layout"
 import { useEffect, useState } from 'react';
 import TokenProgress from "@/components/auth/TokenProgress";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
 
 const App = () => {
 
-  const router = useRouter()
+  const router = useRouter();
 
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { isLoggedIn, setIsLoggedIn } = useAuth();
+
   const [isLoading, setIsLoading] = useState(true);
   const [progress, setProgress] = useState(13);
 
@@ -19,8 +21,7 @@ const App = () => {
       const token = localStorage.getItem('secret-santa-login-token');
       if (token) {
         setIsLoggedIn(true);
-        // Redirect to "/home" if the user is logged in
-        router.push('/home'); // Use router.push to navigate
+        router.push('/home');
       } else {
         setIsLoggedIn(false);
       }
@@ -31,13 +32,15 @@ const App = () => {
       clearTimeout(loadingTimer);
       clearTimeout(progressTimer);
     };
-  }, []);
+  }, [setIsLoggedIn]);
 
   return (
     <>
       {
         !isLoggedIn && isLoading && (
-          <TokenProgress progress={progress} />
+          <Layout>
+            <TokenProgress progress={progress} />
+          </Layout>
         )
       }
       {
@@ -49,7 +52,6 @@ const App = () => {
       }
     </>
   );
-
 }
 
 export default App;

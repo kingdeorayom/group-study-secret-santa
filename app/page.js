@@ -32,6 +32,7 @@ const App = () => {
       clearTimeout(loadingTimer);
       clearTimeout(progressTimer);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setIsLoggedIn]);
 
   return (

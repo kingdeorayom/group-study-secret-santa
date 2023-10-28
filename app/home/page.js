@@ -1,10 +1,13 @@
 'use client'
 
 import Layout from '@/layouts/Layout';
-import React, { useEffect, useState } from 'react';
-import { Button } from "@/components/ui/button";
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
+
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import Profile from '@/components/Profile';
+import SecretSantaGenerator from '@/components/SecretSantaGenerator';
 
 const Home = () => {
 
@@ -20,21 +23,28 @@ const Home = () => {
         } else {
             setIsLoading(false);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
-
-    const handleLogout = () => {
-        if (isLoggedIn) {
-            setIsLoggedIn(false);
-            localStorage.removeItem('secret-santa-login-token');
-            router.push('/');
-        } else {
-            console.error('Logout failed. User is not logged in.');
-        }
-    }
 
     return !isLoading && isLoggedIn && (
         <Layout>
-            <Button onClick={handleLogout}>Log out</Button>
+            <Tabs defaultValue="secretSantaGenerator" className="mb-20">
+                <TabsList className="mb-6">
+                    <TabsTrigger value="secretSantaGenerator">Secret Santa Generator</TabsTrigger>
+                    <TabsTrigger value="profile">Your Profile</TabsTrigger>
+                </TabsList>
+                <TabsContent value="secretSantaGenerator">
+                    <SecretSantaGenerator />
+                </TabsContent>
+                <TabsContent value="profile">
+                    <Profile
+                        isLoggedIn={isLoggedIn}
+                        setIsLoggedIn={setIsLoggedIn}
+                        router={router}
+                    />
+                </TabsContent>
+            </Tabs>
+
         </Layout>
     );
 

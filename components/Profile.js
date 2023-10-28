@@ -164,7 +164,7 @@ const Profile = ({ isLoggedIn, setIsLoggedIn, router }) => {
                                                 </Link>
                                             ))
                                         ) : (
-                                            <div className="flex justify-center mt-4 mb-3">
+                                            <div className="flex justify-center text-center mt-4 mb-3">
                                                 <div>
                                                     <Image
                                                         src={question_flatline}

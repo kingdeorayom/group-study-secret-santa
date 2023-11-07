@@ -31,6 +31,13 @@ const FormSchema = z.object({
 
 const Profile = ({ isLoggedIn, setIsLoggedIn, router }) => {
 
+    // Set the target date to December 02, 2023
+    const targetDate = new Date('2023-12-02');
+    // Get the current date
+    const currentDate = new Date();
+    // Compare the current date with the target date
+    const isAfterTargetDate = currentDate < targetDate;
+
     const { userData } = useAuth();
 
     const [wishlist, setWishlist] = useState([])
@@ -196,9 +203,15 @@ const Profile = ({ isLoggedIn, setIsLoggedIn, router }) => {
                         </div>
 
                         <Dialog>
-                            <DialogTrigger asChild>
-                                <Button className="ms-8" variant="outline">Add item</Button>
-                            </DialogTrigger>
+                            {
+                                isAfterTargetDate ? (
+                                    <DialogTrigger asChild>
+                                        <Button className="ms-8" variant="outline">
+                                            Add item
+                                        </Button>
+                                    </DialogTrigger>
+                                ) : null
+                            }
                             <DialogContent className="sm:max-w-[425px]">
                                 <Form {...form}>
                                     <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -275,6 +288,12 @@ const Profile = ({ isLoggedIn, setIsLoggedIn, router }) => {
 
                     </div>
                 </CardHeader>
+                <Separator />
+                <CardFooter className="flex justify-between mt-5">
+                    <Label className="font-light text-xs">
+                        {"Note that you won't be able to add a wishlist starting Saturday, December 2, 2023"}
+                    </Label>
+                </CardFooter>
             </Card>
 
             {

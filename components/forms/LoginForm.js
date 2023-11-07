@@ -56,6 +56,7 @@ const LoginForm = () => {
                 setLoginError(null);
                 setIsSubmitting(false);
                 localStorage.setItem('secret-santa-login-token', response.data.token);
+                localStorage.setItem('secret-santa-user-data', JSON.stringify(response.data.user));
                 setIsLoggedIn(true)
                 router.push('/home')
             }

@@ -112,7 +112,7 @@ const RegistrationForm = () => {
                                     <Input placeholder="Enter your real name" {...field} />
                                 </FormControl>
                                 <FormDescription className="text-xs mx-1">
-                                    To ensure a smooth Secret Santa process, please provide your real name. It helps in matching participants accurately.
+                                    {"To ensure a smooth Secret Santa process, please provide your real name. It helps in matching participants accurately. Also note that you won't be able to change this later."}
                                 </FormDescription>
                                 <FormMessage />
                             </FormItem>
@@ -127,6 +127,9 @@ const RegistrationForm = () => {
                                 <FormControl>
                                     <Input placeholder="Enter your code name" {...field} />
                                 </FormControl>
+                                <FormDescription className="text-xs mx-1">
+                                    {"You won't be able to change this later."}
+                                </FormDescription>
                                 <FormMessage />
                             </FormItem>
                         )}
@@ -140,6 +143,9 @@ const RegistrationForm = () => {
                                 <FormControl>
                                     <Input placeholder="Enter your password" type={isPasswordShown ? "text" : "password"} {...field} />
                                 </FormControl>
+                                <FormDescription className="text-xs mx-1">
+                                    {"You won't be able to change this later."}
+                                </FormDescription>
                                 <FormMessage />
                             </FormItem>
                         )}

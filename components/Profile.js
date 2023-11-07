@@ -175,7 +175,7 @@ const Profile = ({ isLoggedIn, setIsLoggedIn, router }) => {
                                 {userData.name}
                             </CardDescription>
                         </div>
-                        <Button onClick={handleLogout} className="bg-red-700">Log out</Button>
+                        <Button onClick={handleLogout} className="bg-red-700 hover:bg-red-800">Log out</Button>
                     </div>
                 </CardHeader>
                 <Separator />
@@ -190,8 +190,9 @@ const Profile = ({ isLoggedIn, setIsLoggedIn, router }) => {
                 <CardHeader>
                     <div className="flex justify-between items-center">
                         <div className='flex-1'>
-                            <CardTitle className="mb-1">My Wishlist</CardTitle>
-                            <CardDescription>A wishlist will assist the participant who picks you in making a thoughtful gift choice.</CardDescription>
+                            <CardTitle className="mb-2">My Wishlist</CardTitle>
+                            <CardDescription>{`A wishlist will assist the participant who picks you in making a thoughtful gift choice.`}</CardDescription>
+                            {/* <CardDescription className="mt-2">{`Note that you won't be able to add a wishlist five days before the event date.`}</CardDescription> */}
                         </div>
 
                         <Dialog>
@@ -278,15 +279,15 @@ const Profile = ({ isLoggedIn, setIsLoggedIn, router }) => {
 
             {
                 wishlist.length === 0 ? (
-                    <div className="flex justify-center text-center mt-10 mb-3">
+                    <div className="flex justify-center text-center mt-12 mb-3">
                         <div>
                             <Image
                                 src={question_flatline}
-                                className='w-48 h-32 object-cover mb-2'
+                                className='w-48 h-32 object-cover mb-4'
                                 alt='Question Flatline'
                             />
                             <Label className="text-sm font-light">
-                                Your wishlist is empty
+                                Your wishlist is empty.
                             </Label>
                         </div>
                     </div>

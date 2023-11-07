@@ -30,7 +30,7 @@ const Home = () => {
         <Layout>
             <Tabs defaultValue="secretSantaGenerator" className="mb-20">
                 <TabsList className="mb-6">
-                    <TabsTrigger value="secretSantaGenerator">Secret Santa Generator</TabsTrigger>
+                    <TabsTrigger value="secretSantaGenerator">Pick a participant</TabsTrigger>
                     <TabsTrigger value="profile">Your Profile</TabsTrigger>
                 </TabsList>
                 <TabsContent value="secretSantaGenerator">

@@ -172,10 +172,10 @@ const RegistrationForm = () => {
                         <Megaphone className="h-4 w-4" />
                         <AlertTitle className="font-bold">Disclaimer</AlertTitle>
                         {/* <AlertDescription>
-                            Please note that I, Serking, is not liable for the data you provide, including your password, real name, or code name. Your information is kept secure, your password remain private to you, but you should exercise caution.
+                            Please note that I, Serking, is not liable for the data you provide, including your password, real name, or code name. Your information is kept secure, your password and codename remain private to you, but you should exercise caution.
                         </AlertDescription> */}
                         <AlertDescription>
-                            I am <span className="font-bold">not</span> liable for the data you provide, including your password, real name, or code name. Your information is kept secure, your password <span className="font-bold">remain private to you</span>, but you should exercise caution.
+                            I am <span className="font-bold">not</span> liable for the data you provide, including your password, real name, or code name. Your information is kept secure, your password and codename <span className="font-bold">remain private to you</span>, but you should exercise caution.
                         </AlertDescription>
                     </Alert>
 

@@ -13,7 +13,7 @@ const Home = () => {
 
     const router = useRouter();
 
-    const { isLoggedIn, setIsLoggedIn } = useAuth();
+    const { isLoggedIn, setIsLoggedIn, userData } = useAuth();
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
@@ -25,6 +25,8 @@ const Home = () => {
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+    console.log(userData, "/home")
 
     return !isLoading && isLoggedIn && (
         <Layout>

@@ -31,14 +31,11 @@ const FormSchema = z.object({
 
 const Profile = ({ isLoggedIn, setIsLoggedIn, router }) => {
 
-    // Set the target date to December 02, 2023
     const targetDate = new Date('2023-12-02');
-    // Get the current date
     const currentDate = new Date();
-    // Compare the current date with the target date
     const isAfterTargetDate = currentDate < targetDate;
 
-    const { userData } = useAuth();
+    const { userData, updateUserData } = useAuth();
 
     const [wishlist, setWishlist] = useState([])
 
@@ -53,11 +50,8 @@ const Profile = ({ isLoggedIn, setIsLoggedIn, router }) => {
                     Authorization: `Bearer ${token}`,
                 },
             });
-
             const fetchedWishlist = response.data;
-
             setWishlist(fetchedWishlist); // Update the state with the fetched data
-
         } catch (error) {
             console.error('Error fetching user wishlist', error);
         }
@@ -82,6 +76,7 @@ const Profile = ({ isLoggedIn, setIsLoggedIn, router }) => {
             setIsLoggedIn(false);
             localStorage.removeItem('secret-santa-login-token');
             localStorage.removeItem('secret-santa-user-data');
+            updateUserData(null)
             router.push('/');
         } else {
             console.error('Logout failed. User is not logged in.');
@@ -114,10 +109,8 @@ const Profile = ({ isLoggedIn, setIsLoggedIn, router }) => {
 
     const removeWishlist = async (itemId) => {
         try {
-            // Make an axios DELETE request to the server to delete the wishlist item by its _id
             const userId = userData.userId;
             const token = localStorage.getItem('secret-santa-login-token');
-
             await axios.delete(
                 `${process.env.NEXT_PUBLIC_API_URL}/users/delete-wishlist/${userId}/${itemId}`,
                 {
@@ -126,12 +119,9 @@ const Profile = ({ isLoggedIn, setIsLoggedIn, router }) => {
                     },
                 }
             );
-
-            // If the request is successful, update the state by filtering out the deleted wishlist item
             const updatedWishlist = wishlist.filter((item) => item._id !== itemId);
             setWishlist(updatedWishlist);
         } catch (error) {
-            // Handle any errors, e.g., network issues or API errors
             console.error('Error deleting wishlist item', error);
         }
     };

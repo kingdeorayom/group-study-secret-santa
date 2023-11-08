@@ -22,6 +22,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Separator } from './ui/separator'
 import { Badge } from './ui/badge'
 import Link from 'next/link'
+import { useAuth } from '@/context/AuthContext';
 
 
 const SecretSantaGenerator = () => {
@@ -38,6 +39,8 @@ const SecretSantaGenerator = () => {
             setHasPicked(true)
         }, 1000);
     }
+
+    const { userData } = useAuth();
 
     return (
         <section className="max-w-lg mx-auto">
@@ -66,7 +69,7 @@ const SecretSantaGenerator = () => {
                     </Card> : null
             }
 
-            {
+            {/* {
                 hasPicked ? <Alert className="mt-5">
                     <Terminal className="h-4 w-4" />
                     <AlertTitle className="mb-2">Notice: Shuffling Method</AlertTitle>
@@ -74,7 +77,7 @@ const SecretSantaGenerator = () => {
                         The selection of participants has been randomized utilizing the Fisher-Yates shuffle algorithm. This technique ensures an equitable and unbiased arrangement of participants, ensuring that the order of the participants is genuinely random. Be assured that the outcome is not predetermined, and each participant has an equal opportunity to appear in any position.
                     </AlertDescription>
                 </Alert> : null
-            }
+            } */}
 
             {
                 hasPicked ?

@@ -30,13 +30,13 @@ const RegistrationForm = () => {
 
     const router = useRouter()
 
-    const { setIsLoggedIn } = useAuth();
+    const { setIsLoggedIn, updateUserData } = useAuth();
 
     const form = useForm({
         resolver: zodResolver(FormSchema),
         defaultValues: {
-            name: "Serking de Orayom",
-            codeName: "kingdeorayom",
+            name: "Participant 1",
+            codeName: "participant_1",
             password: "Serking28;",
         },
     })
@@ -62,6 +62,8 @@ const RegistrationForm = () => {
                 setIsSubmitting(false);
                 localStorage.setItem('secret-santa-login-token', response.data.token);
                 localStorage.setItem('secret-santa-user-data', JSON.stringify(response.data.user));
+                const storedUserData = JSON.parse(localStorage.getItem('secret-santa-user-data'));
+                updateUserData(storedUserData)
                 setIsLoggedIn(true);
                 router.push('/home')
             }

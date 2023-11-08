@@ -14,9 +14,8 @@ import Image from 'next/image';
 import { Input } from './ui/input';
 import { useForm } from "react-hook-form"
 import * as z from "zod"
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { zodResolver } from "@hookform/resolvers/zod"
-// import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, } from "@/components/ui/select"
 import axios from "axios"
 import { useAuth } from '@/context/AuthContext';
 
@@ -189,7 +188,6 @@ const Profile = ({ isLoggedIn, setIsLoggedIn, router }) => {
                         <div className='flex-1'>
                             <CardTitle className="mb-2">My Wishlist</CardTitle>
                             <CardDescription>{`A wishlist will assist the participant who picks you in making a thoughtful gift choice.`}</CardDescription>
-                            {/* <CardDescription className="mt-2">{`Note that you won't be able to add a wishlist five days before the event date.`}</CardDescription> */}
                         </div>
 
                         <Dialog>
@@ -342,7 +340,6 @@ const Profile = ({ isLoggedIn, setIsLoggedIn, router }) => {
                                 </CardContent>
                                 <Separator />
                                 <CardFooter className="flex justify-between pt-5 bg-neutral-50">
-                                    {/* <Button onClick={() => removeWishlist(index)} variant='outline' className="">Remove from wishlist</Button> */}
                                     <Dialog>
                                         <DialogTrigger asChild>
                                             <Button variant='outline' className="">Remove from wishlist</Button>

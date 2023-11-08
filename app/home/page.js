@@ -26,7 +26,7 @@ const Home = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    console.log(userData, "/home")
+    // console.log(userData, "/home")
 
     return !isLoading && isLoggedIn && (
         <Layout>

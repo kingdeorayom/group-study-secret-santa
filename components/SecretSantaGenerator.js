@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Alert, AlertDescription, AlertTitle } from './ui/alert'
 import { Terminal } from 'lucide-react'
 import { Button } from './ui/button'
@@ -8,39 +8,81 @@ import Image from 'next/image'
 import { Label } from './ui/label'
 import question_flatline from '../public/question-flatline.png'
 import drawing from '../public/drawing.gif'
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "@/components/ui/dialog"
-import { Input } from './ui/input'
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from './ui/separator'
 import { Badge } from './ui/badge'
 import Link from 'next/link'
 import { useAuth } from '@/context/AuthContext';
-
+import axios from "axios"
 
 const SecretSantaGenerator = () => {
 
-    const [isPicking, setIsPicking] = useState(false)
-    const [hasPicked, setHasPicked] = useState(false)
+    const { userData, updateUserData } = useAuth();
 
-    const handlePick = () => {
+    const [isPicking, setIsPicking] = useState(false)
+    const [hasPicked, setHasPicked] = useState(userData.hasPicked)
+    const [recipientData, setRecipientData] = useState([])
+    const [wishlist, setWishlist] = useState([])
+
+    const getRecipientDetails = async () => {
+        const recipientId = userData.recipient._id
+        const token = localStorage.getItem('secret-santa-login-token');
+        try {
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/users/${recipientId}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            if (response.status === 200) {
+                const fetchedRecipientDetails = response.data;
+                setRecipientData(fetchedRecipientDetails)
+                setWishlist(fetchedRecipientDetails.wishlists)
+            }
+        } catch (error) {
+            console.error('Error fetching recipient data', error);
+        }
+    }
+
+    useEffect(() => {
+        if (userData && userData.recipient) {
+            getRecipientDetails();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
+
+    const handlePick = async () => {
 
         setIsPicking(true)
 
-        setTimeout(() => {
-            setIsPicking(false)
-            setHasPicked(true)
-        }, 1000);
-    }
+        try {
+            const userId = userData.userId;
+            const token = localStorage.getItem('secret-santa-login-token');
 
-    const { userData } = useAuth();
+            const response = await axios.post(
+                `${process.env.NEXT_PUBLIC_API_URL}/users/pick/${userId}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+
+            if (response.status === 200) {
+                setIsPicking(false)
+                setHasPicked(true)
+                localStorage.setItem('secret-santa-user-data', JSON.stringify(response.data.pickerDetails));
+                updateUserData(response.data.pickerDetails)
+                setRecipientData(response.data.recipientDetails)
+            } else {
+                console.error('Error picking.');
+                setIsPicking(false)
+            }
+        } catch (error) {
+            console.error('Error picking a participant:', error);
+            setIsPicking(false)
+        }
+    }
 
     return (
         <section className="max-w-lg mx-auto">
@@ -55,8 +97,23 @@ const SecretSantaGenerator = () => {
                                         The participant you picked was...
                                     </CardDescription>
                                     <CardTitle className="mb-1">
-                                        catastrophic catastrophe
+                                        {`${recipientData.codeName}`}
                                     </CardTitle>
+                                    <Dialog>
+                                        <DialogTrigger>
+                                            <Label className="font-normal underline text-xs cursor-pointer">
+                                                Learn more
+                                            </Label>
+                                        </DialogTrigger>
+                                        <DialogContent>
+                                            <DialogHeader>
+                                                <DialogTitle>Shuffling Method</DialogTitle>
+                                                <DialogDescription>
+                                                    The selection of participants has been randomized utilizing the Fisher-Yates shuffle algorithm. This technique ensures an equitable and unbiased arrangement of participants, ensuring that the order of the participants is genuinely random. Be assured that the outcome is not predetermined, and each participant has an equal opportunity to appear in any position.
+                                                </DialogDescription>
+                                            </DialogHeader>
+                                        </DialogContent>
+                                    </Dialog>
                                 </div>
                             </div>
                         </CardHeader>
@@ -69,16 +126,6 @@ const SecretSantaGenerator = () => {
                     </Card> : null
             }
 
-            {/* {
-                hasPicked ? <Alert className="mt-5">
-                    <Terminal className="h-4 w-4" />
-                    <AlertTitle className="mb-2">Notice: Shuffling Method</AlertTitle>
-                    <AlertDescription>
-                        The selection of participants has been randomized utilizing the Fisher-Yates shuffle algorithm. This technique ensures an equitable and unbiased arrangement of participants, ensuring that the order of the participants is genuinely random. Be assured that the outcome is not predetermined, and each participant has an equal opportunity to appear in any position.
-                    </AlertDescription>
-                </Alert> : null
-            } */}
-
             {
                 hasPicked ?
                     <Card className="w-full mt-5">
@@ -86,7 +133,7 @@ const SecretSantaGenerator = () => {
                             <div className="flex justify-between items-center">
                                 <div>
                                     <CardTitle className="mb-1">
-                                        {"catastrophic catastrophe's wishlist"}
+                                        {`${recipientData.codeName}'s wishlist`}
                                     </CardTitle>
                                 </div>
                             </div>
@@ -94,7 +141,7 @@ const SecretSantaGenerator = () => {
                         <Separator />
                         <CardFooter className="flex justify-between mt-5">
                             <Label className="font-light text-xs">
-                                {"Feel free to periodically check the app while the event hasn't started, as catastrophic catastrophe might update their wishlist if they haven't done so already."}
+                                {`Feel free to periodically check the app while the event hasn't started, as ${recipientData.codeName} might update their wishlist if they haven't done so already.`}
                             </Label>
                         </CardFooter>
                     </Card> : null
@@ -102,17 +149,67 @@ const SecretSantaGenerator = () => {
 
             {
                 hasPicked ?
-                    <Card className="w-full mt-4">
-                        <CardContent className="mt-3">
-                            <div className="py-1 rounded-lg">
-                                <Badge variant="outline">{`High Priority`}</Badge>
-                                <p className="font-semibold mt-2">{`Wishlist 1`}</p>
-                                <Separator className="mt-3 mb-4" />
-                                <p className="text-xs mt-2 font-semibold me-1">Where you can buy:</p>
+                    (
 
+                        wishlist.length === 0 ? (
+                            <div className="flex justify-center text-center mt-12 mb-3">
+                                <div>
+                                    <Image
+                                        src={question_flatline}
+                                        className='w-48 h-32 object-cover mb-4'
+                                        alt='Question Flatline'
+                                    />
+                                    <Label className="text-sm font-light">
+                                        {`${recipientData.codeName}'s wishlist is empty`}
+                                    </Label>
+                                </div>
                             </div>
-                        </CardContent>
-                    </Card> : null
+                        ) : (
+                            wishlist.map((item) => {
+                                return (
+                                    <Card className="w-full mt-4" key={item._id}>
+                                        <CardContent className="mt-3">
+                                            <div className="py-1 rounded-lg">
+                                                <Badge variant="outline">{`${item.priority} Priority`}</Badge>
+                                                <p className="font-semibold mt-2">{`${item.title}`}</p>
+                                                <Separator className="mt-3 mb-4" />
+                                                <p className="text-xs mt-2 font-semibold me-1">Where you can buy:</p>
+                                                {
+                                                    item.links.length > 0 ? (
+                                                        item.links.map((link, index) => (
+                                                            <Link
+                                                                key={index}
+                                                                href={link}
+                                                                target='_blank'
+                                                            >
+                                                                <p className="text-xs text-blue-500 mt-3 hover:underline line-clamp-2">
+                                                                    {`${link}`}
+                                                                </p>
+                                                            </Link>
+                                                        ))
+                                                    ) : (
+                                                        <div className="flex justify-center text-center mt-4 mb-3">
+                                                            <div>
+                                                                <Image
+                                                                    src={question_flatline}
+                                                                    className='w-48 h-32 object-cover mb-2'
+                                                                    alt='Question Flatline'
+                                                                />
+                                                                <Label className="text-sm font-light">
+                                                                    No information provided
+                                                                </Label>
+                                                            </div>
+                                                        </div>
+                                                    )
+                                                }
+                                            </div>
+                                        </CardContent>
+                                    </Card>
+                                );
+                            })
+                        )
+
+                    ) : null
             }
 
             {

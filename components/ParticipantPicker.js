@@ -6,7 +6,9 @@ import { Terminal } from 'lucide-react'
 import { Button } from './ui/button'
 import Image from 'next/image'
 import { Label } from './ui/label'
-import question_flatline from '../public/question-flatline.png'
+import no_information_provided from '../public/no_information_provided.png'
+import picking_not_allowed from '../public/picking_not_allowed.png'
+import question from '../public/question.png'
 import drawing from '../public/drawing.gif'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
@@ -16,7 +18,7 @@ import Link from 'next/link'
 import { useAuth } from '@/context/AuthContext';
 import axios from "axios"
 
-const SecretSantaGenerator = () => {
+const ParticipantPicker = () => {
 
     const { userData, updateUserData } = useAuth();
 
@@ -24,6 +26,11 @@ const SecretSantaGenerator = () => {
     const [hasPicked, setHasPicked] = useState(userData.hasPicked)
     const [recipientData, setRecipientData] = useState([])
     const [wishlist, setWishlist] = useState([])
+
+    const currentDate = new Date();
+    const targetDate = new Date('November 25, 2023');
+
+    const isButtonDisabled = currentDate < targetDate;
 
     const getRecipientDetails = async () => {
         const recipientId = userData.recipient._id
@@ -55,33 +62,35 @@ const SecretSantaGenerator = () => {
 
         setIsPicking(true)
 
-        try {
-            const userId = userData.userId;
-            const token = localStorage.getItem('secret-santa-login-token');
+        setTimeout(async () => {
+            try {
+                const userId = userData.userId;
+                const token = localStorage.getItem('secret-santa-login-token');
 
-            const response = await axios.post(
-                `${process.env.NEXT_PUBLIC_API_URL}/users/pick/${userId}`,
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
+                const response = await axios.post(
+                    `${process.env.NEXT_PUBLIC_API_URL}/users/pick/${userId}`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    }
+                );
+
+                if (response.status === 200) {
+                    setIsPicking(false)
+                    setHasPicked(true)
+                    localStorage.setItem('secret-santa-user-data', JSON.stringify(response.data.pickerDetails));
+                    updateUserData(response.data.pickerDetails)
+                    setRecipientData(response.data.recipientDetails)
+                } else {
+                    console.error('Error picking.');
+                    setIsPicking(false)
                 }
-            );
-
-            if (response.status === 200) {
-                setIsPicking(false)
-                setHasPicked(true)
-                localStorage.setItem('secret-santa-user-data', JSON.stringify(response.data.pickerDetails));
-                updateUserData(response.data.pickerDetails)
-                setRecipientData(response.data.recipientDetails)
-            } else {
-                console.error('Error picking.');
+            } catch (error) {
+                console.error('Error picking a participant:', error);
                 setIsPicking(false)
             }
-        } catch (error) {
-            console.error('Error picking a participant:', error);
-            setIsPicking(false)
-        }
+        }, 5000);
     }
 
     return (
@@ -107,7 +116,7 @@ const SecretSantaGenerator = () => {
                                         </DialogTrigger>
                                         <DialogContent>
                                             <DialogHeader>
-                                                <DialogTitle>Shuffling Method</DialogTitle>
+                                                <DialogTitle className="mb-2">Shuffling Method</DialogTitle>
                                                 <DialogDescription>
                                                     The selection of participants has been randomized utilizing the Fisher-Yates shuffle algorithm. This technique ensures an equitable and unbiased arrangement of participants, ensuring that the order of the participants is genuinely random. Be assured that the outcome is not predetermined, and each participant has an equal opportunity to appear in any position.
                                                 </DialogDescription>
@@ -152,11 +161,11 @@ const SecretSantaGenerator = () => {
                     (
 
                         wishlist.length === 0 ? (
-                            <div className="flex justify-center text-center mt-12 mb-3">
-                                <div>
+                            <div className="text-center mt-12 mb-3">
+                                <div className='mx-auto'>
                                     <Image
-                                        src={question_flatline}
-                                        className='w-48 h-32 object-cover mb-4'
+                                        src={no_information_provided}
+                                        className='max-w-48 max-h-48 object-contain mb-4'
                                         alt='Question Flatline'
                                     />
                                     <Label className="text-sm font-light">
@@ -191,8 +200,8 @@ const SecretSantaGenerator = () => {
                                                         <div className="flex justify-center text-center mt-4 mb-3">
                                                             <div>
                                                                 <Image
-                                                                    src={question_flatline}
-                                                                    className='w-48 h-32 object-cover mb-2'
+                                                                    src={no_information_provided}
+                                                                    className='w-48 h-48 object-cover mb-2'
                                                                     alt='Question Flatline'
                                                                 />
                                                                 <Label className="text-sm font-light">
@@ -227,32 +236,74 @@ const SecretSantaGenerator = () => {
             {
                 isPicking ?
                     (
-                        <div className='mt-14 flex justify-center text-center'>
-                            <div>
+                        <div className='mt-14 text-center flex items-center'>
+                            <div className='mx-auto'>
                                 <Image
                                     src={drawing}
-                                    className='w-64 h-64'
+                                    className='w-48 h-48 object-contain'
                                     alt='Picking participant'
                                 />
                                 <p className="text-sm font-light">
-                                    Picking a participant. Please wait.
+                                    Picking a participant. Please wait...
                                 </p>
                             </div>
                         </div>
                     ) :
                     (
-                        !hasPicked ? <div className='mt-14 flex justify-center text-center'>
-                            <div>
+                        !hasPicked ? <div className='mt-14 text-center'>
+                            <div className='mx-auto'>
                                 <Image
-                                    src={question_flatline}
-                                    className='w-48 h-32 object-cover mb-2'
+                                    src={isButtonDisabled ? picking_not_allowed : question}
+                                    className='max-w-48 max-h-48 object-contain mb-2'
                                     alt='Question Flatline'
                                 />
-                                <p className="text-sm font-light mb-8">
-                                    {"You haven't picked a participant yet."}
+                                <p className="text-sm font-light mb-2">
+                                    {
+                                        isButtonDisabled ? `Picking a participant is not allowed until ${targetDate.toLocaleDateString('en-US', {
+                                            year: 'numeric',
+                                            month: 'long',
+                                            day: 'numeric',
+                                        })}.` : `You haven't picked a participant yet.`
+                                    }
                                 </p>
 
-                                <Button onClick={handlePick}>Pick a participant</Button>
+                                {
+                                    isButtonDisabled ?
+                                        <p className="text-sm font-light mb-2">For the meantime, why not add some items to your wishlist?</p> :
+                                        null
+                                }
+
+                                <div className='my-5'>
+                                    <Button
+                                        onClick={handlePick}
+                                        disabled={isButtonDisabled}
+                                    >
+                                        Pick a participant
+                                    </Button>
+                                </div>
+
+                                {
+                                    isButtonDisabled ?
+                                        <Dialog>
+                                            <DialogTrigger>
+                                                <Label className="font-normal underline text-xs cursor-pointer">
+                                                    Why picking a participant is not yet allowed?
+                                                </Label>
+                                            </DialogTrigger>
+                                            <DialogContent>
+                                                <DialogHeader>
+                                                    <DialogTitle className="mb-2">Why picking a participant is not yet allowed?</DialogTitle>
+                                                    <DialogDescription>
+                                                        {`Picking participants is not allowed until until ${targetDate.toLocaleDateString('en-US', {
+                                                            year: 'numeric',
+                                                            month: 'long',
+                                                            day: 'numeric',
+                                                        })} to ensure a fair and unbiased drawing process. Allowing users to pick earlier might lead to an insufficient number of registered participants, potentially disrupting the intended randomness of the selection. By waiting until the specified date, we aim to maximize participation and maintain the integrity of the participant drawing.`}
+                                                    </DialogDescription>
+                                                </DialogHeader>
+                                            </DialogContent>
+                                        </Dialog> : null
+                                }
 
                             </div>
                         </div> : null
@@ -263,4 +314,4 @@ const SecretSantaGenerator = () => {
     )
 }
 
-export default SecretSantaGenerator
+export default ParticipantPicker

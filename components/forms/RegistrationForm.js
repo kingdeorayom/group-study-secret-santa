@@ -114,7 +114,7 @@ const RegistrationForm = () => {
                                     <Input placeholder="Enter your real name" {...field} />
                                 </FormControl>
                                 <FormDescription className="text-xs mx-1">
-                                    {"To ensure a smooth Secret Santa process, please provide your real name. It helps in matching participants accurately. Also note that you won't be able to change this later."}
+                                    {"To ensure a smooth drawing process, please provide your real name. It helps in matching participants accurately. Also note that you won't be able to change this later."}
                                 </FormDescription>
                                 <FormMessage />
                             </FormItem>
@@ -130,7 +130,7 @@ const RegistrationForm = () => {
                                     <Input placeholder="Enter your code name" {...field} />
                                 </FormControl>
                                 <FormDescription className="text-xs mx-1">
-                                    {"You won't be able to change this later."}
+                                    {"Remember your code name. You won't be able to change this later."}
                                 </FormDescription>
                                 <FormMessage />
                             </FormItem>
@@ -146,7 +146,7 @@ const RegistrationForm = () => {
                                     <Input placeholder="Enter your password" type={isPasswordShown ? "text" : "password"} {...field} />
                                 </FormControl>
                                 <FormDescription className="text-xs mx-1">
-                                    {"You won't be able to change this later."}
+                                    {"Remember your password. You won't be able to change this later."}
                                 </FormDescription>
                                 <FormMessage />
                             </FormItem>
@@ -172,10 +172,10 @@ const RegistrationForm = () => {
                         <Megaphone className="h-4 w-4" />
                         <AlertTitle className="font-bold">Disclaimer</AlertTitle>
                         {/* <AlertDescription>
-                            Please note that I, Serking, is not liable for the data you provide, including your password, real name, or code name. Your information is kept secure, your password and codename remain private to you, but you should exercise caution.
+                            Please note that I, Serking, is not liable for the data you provide, including your password, real name, or code name. Your information is kept secure, your password and code name remain private to you, but you should exercise caution.
                         </AlertDescription> */}
                         <AlertDescription>
-                            I am <span className="font-bold">not</span> liable for the data you provide, including your password, real name, or code name. Your information is kept secure, your password and codename <span className="font-bold">remain private to you</span>, but you should exercise caution.
+                            The developer is <span className="font-bold">not</span> liable for the data you provide; including, but not limited to your real name, code name and password. Rest assured your information is kept secure and your password and code name <span className="font-bold">remain private to you</span>, but you should still exercise caution.
                         </AlertDescription>
                     </Alert>
 

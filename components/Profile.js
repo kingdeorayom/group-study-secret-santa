@@ -9,7 +9,7 @@ import { Separator } from './ui/separator';
 import { Label } from './ui/label';
 import Link from 'next/link';
 import { Badge } from "@/components/ui/badge"
-import question_flatline from '../public/question-flatline.png'
+import no_information_provided from '../public/no_information_provided.png'
 import Image from 'next/image';
 import { Input } from './ui/input';
 import { useForm } from "react-hook-form"
@@ -286,11 +286,11 @@ const Profile = ({ isLoggedIn, setIsLoggedIn, router }) => {
 
             {
                 wishlist.length === 0 ? (
-                    <div className="flex justify-center text-center mt-12 mb-3">
-                        <div>
+                    <div className="text-center mt-12 mb-3">
+                        <div className='mx-auto'>
                             <Image
-                                src={question_flatline}
-                                className='w-48 h-32 object-cover mb-4'
+                                src={no_information_provided}
+                                className='max-w-48 max-h-48 object-contain mb-4'
                                 alt='Question Flatline'
                             />
                             <Label className="text-sm font-light">
@@ -322,11 +322,11 @@ const Profile = ({ isLoggedIn, setIsLoggedIn, router }) => {
                                                     </Link>
                                                 ))
                                             ) : (
-                                                <div className="flex justify-center text-center mt-4 mb-3">
-                                                    <div>
+                                                <div className="text-center mt-4 mb-3">
+                                                    <div className='mx-auto'>
                                                         <Image
-                                                            src={question_flatline}
-                                                            className='w-48 h-32 object-cover mb-2'
+                                                            src={no_information_provided}
+                                                            className='max-w-48 max-h-48 object-contain mb-2'
                                                             alt='Question Flatline'
                                                         />
                                                         <Label className="text-sm font-light">
@@ -346,7 +346,7 @@ const Profile = ({ isLoggedIn, setIsLoggedIn, router }) => {
                                         </DialogTrigger>
                                         <DialogContent>
                                             <DialogHeader>
-                                                <DialogTitle>Remove item from your wishlist?</DialogTitle>
+                                                <DialogTitle className="mb-2">Remove item from your wishlist?</DialogTitle>
                                                 <DialogDescription>
                                                     This action is irreversible. If you wish to have this item restored, you will need to add it again.
                                                 </DialogDescription>

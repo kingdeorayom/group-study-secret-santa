@@ -7,7 +7,7 @@ import { useAuth } from '@/context/AuthContext';
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import Profile from '@/components/Profile';
-import SecretSantaGenerator from '@/components/SecretSantaGenerator';
+import ParticipantPicker from '@/components/ParticipantPicker';
 
 const Home = () => {
 
@@ -30,13 +30,13 @@ const Home = () => {
 
     return !isLoading && isLoggedIn && (
         <Layout>
-            <Tabs defaultValue="secretSantaGenerator" className="mb-20">
+            <Tabs defaultValue="participantPicker" className="mb-20">
                 <TabsList className="mb-6">
-                    <TabsTrigger value="secretSantaGenerator">Pick a participant</TabsTrigger>
+                    <TabsTrigger value="participantPicker">Pick a participant</TabsTrigger>
                     <TabsTrigger value="profile">Your Profile</TabsTrigger>
                 </TabsList>
-                <TabsContent value="secretSantaGenerator">
-                    <SecretSantaGenerator />
+                <TabsContent value="participantPicker">
+                    <ParticipantPicker />
                 </TabsContent>
                 <TabsContent value="profile">
                     <Profile

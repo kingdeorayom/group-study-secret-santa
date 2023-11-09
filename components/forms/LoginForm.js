@@ -96,7 +96,7 @@ const LoginForm = () => {
                                     <Input placeholder="Enter your code name" {...field} />
                                 </FormControl>
                                 <FormDescription className="text-xs mx-1">
-                                    Code names are also case-sensitive. Make sure to enter the code name exactly as you did during registration.
+                                    Code name is case-sensitive. Make sure to enter the code name exactly as you did during registration.
                                 </FormDescription>
                                 <FormMessage />
                             </FormItem>

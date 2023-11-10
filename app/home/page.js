@@ -26,8 +26,6 @@ const Home = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    // console.log(userData, "/home")
-
     return !isLoading && isLoggedIn && (
         <Layout>
             <Tabs defaultValue="participantPicker" className="mb-20">

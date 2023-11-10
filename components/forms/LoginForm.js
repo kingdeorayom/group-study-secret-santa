@@ -40,17 +40,29 @@ const LoginForm = () => {
     const [isPasswordShown, setIsPasswordShown] = useState(false);
     const [loginError, setLoginError] = useState(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [fetchStatus, setFetchStatus] = useState(null);
 
     const togglePassword = () => setIsPasswordShown(!isPasswordShown);
 
     const onSubmit = async (data) => {
         setIsSubmitting(true);
+        let timeoutId;
         try {
+
+            // Set a timer for 5 seconds
+            timeoutId = setTimeout(() => {
+                // Display a message to the user if the request is taking longer than 5 seconds
+                setFetchStatus("Logging in is taking longer than usual. Please wait.");
+            }, 2000);
+
             const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/users/login`, data, {
                 headers: {
                     'Content-Type': 'application/json',
                 },
             });
+
+            // Clear the timer as the response is received within 5 seconds
+            clearTimeout(timeoutId);
 
             if (response.status === 200) {
                 setLoginError(null);
@@ -64,9 +76,19 @@ const LoginForm = () => {
             }
 
         } catch (error) {
-            setLoginError(error.response.data.message);
+            // setLoginError(error.response.data.message);
+            // setIsSubmitting(false);
+            // Check if error.response is defined before accessing its properties
+            if (error.response && error.response.data) {
+                setLoginError(error.response.data.message);
+            } else {
+                // Handle the case where there is no error.response (e.g., network error)
+                setLoginError("An error occurred during login.");
+            }
             setIsSubmitting(false);
         } finally {
+            // Clear the timer in case of successful login or an error
+            clearTimeout(timeoutId);
             setIsSubmitting(false);
         }
     }
@@ -131,7 +153,7 @@ const LoginForm = () => {
                         </div>
                     </div>
 
-                    <Button type="submit" className="w-full my-6" disabled={isSubmitting}>
+                    <Button type="submit" className="w-full mt-6 mb-6" disabled={isSubmitting}>
                         {
                             isSubmitting ? (
                                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -140,6 +162,11 @@ const LoginForm = () => {
                             )
                         }
                     </Button>
+                    {
+                        fetchStatus && (
+                            <p className="text-xs text-center mb-3">Logging in is taking too long than normal. Please be patient. This could be due to the speed of your internet connection or a server problem in general.</p>
+                        )
+                    }
                 </form>
             </Form>
         </div>

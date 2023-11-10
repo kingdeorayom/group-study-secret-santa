@@ -175,7 +175,7 @@ const RegistrationForm = () => {
                             Please note that I, Serking, is not liable for the data you provide, including your password, real name, or code name. Your information is kept secure, your password and code name remain private to you, but you should exercise caution.
                         </AlertDescription> */}
                         <AlertDescription>
-                            The developer is <span className="font-bold">not</span> liable for the data you provide; including, but not limited to your real name, code name and password. Rest assured your information is kept secure and your password and code name <span className="font-bold">remain private to you</span>, but you should still exercise caution.
+                            The developer is <span className="font-bold">not</span> liable for the data you provide; including, but not limited to your real name, code name and password. Rest assured your information is kept secure and your password and real name <span className="font-bold">remain private to you</span>, but you should still exercise caution.
                         </AlertDescription>
                     </Alert>
 

@@ -13,6 +13,8 @@ import { Checkbox } from "@/components/ui/checkbox"
 import axios from "axios"
 import { useRouter } from 'next/navigation'
 import { useAuth } from "@/context/AuthContext"
+import Link from "next/link"
+import { Label } from "../ui/label"
 
 const FormSchema = z.object({
     codeName: z.string().min(4, {
@@ -32,27 +34,26 @@ const LoginForm = () => {
     const form = useForm({
         resolver: zodResolver(FormSchema),
         defaultValues: {
-            codeName: "participant_1",
-            password: "Serking28;",
+            codeName: "",
+            password: "",
         },
     })
 
     const [isPasswordShown, setIsPasswordShown] = useState(false);
     const [loginError, setLoginError] = useState(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [fetchStatus, setFetchStatus] = useState(null);
+    const [fetchStatus, setFetchStatus] = useState(false);
 
     const togglePassword = () => setIsPasswordShown(!isPasswordShown);
 
     const onSubmit = async (data) => {
         setIsSubmitting(true);
         let timeoutId;
+
         try {
 
-            // Set a timer for 5 seconds
             timeoutId = setTimeout(() => {
-                // Display a message to the user if the request is taking longer than 5 seconds
-                setFetchStatus("Logging in is taking longer than usual. Please wait.");
+                setFetchStatus(true);
             }, 2000);
 
             const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/users/login`, data, {
@@ -76,19 +77,15 @@ const LoginForm = () => {
             }
 
         } catch (error) {
-            // setLoginError(error.response.data.message);
-            // setIsSubmitting(false);
-            // Check if error.response is defined before accessing its properties
             if (error.response && error.response.data) {
                 setLoginError(error.response.data.message);
             } else {
-                // Handle the case where there is no error.response (e.g., network error)
                 setLoginError("An error occurred during login.");
             }
             setIsSubmitting(false);
         } finally {
-            // Clear the timer in case of successful login or an error
             clearTimeout(timeoutId);
+            setFetchStatus(false);
             setIsSubmitting(false);
         }
     }
@@ -156,15 +153,22 @@ const LoginForm = () => {
                     <Button type="submit" className="w-full mt-6 mb-6" disabled={isSubmitting}>
                         {
                             isSubmitting ? (
-                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                <>
+                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                    <Label>Logging in</Label>
+                                </>
                             ) : (
                                 'Log in'
                             )
                         }
                     </Button>
+
                     {
                         fetchStatus && (
-                            <p className="text-xs text-center mb-3">Logging in is taking too long than normal. Please be patient. This could be due to the speed of your internet connection or a server problem in general.</p>
+                            <>
+                                <p className="text-xs text-center mb-3">{"Logging in is taking too long than normal. This could be due to the speed of your internet connection or a server problem in general. Please don't close the page and wait patiently."}</p>
+                                <p className="text-xs text-center mb-3">For the meantime, why not <Link href="https://speedtest.net" target="_blank" className="text-blue-500 underline">test your internet connection speed</Link>?</p>
+                            </>
                         )
                     }
                 </form>

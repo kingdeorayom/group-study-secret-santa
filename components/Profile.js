@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { Button } from "@/components/ui/button";
-import { X } from 'lucide-react'
+import { CheckCheckIcon, CheckCircle, CheckCircle2, Loader2, X, XCircle } from 'lucide-react'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from './ui/separator';
@@ -18,6 +18,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { zodResolver } from "@hookform/resolvers/zod"
 import axios from "axios"
 import { useAuth } from '@/context/AuthContext';
+import { Alert, AlertDescription, AlertTitle } from './ui/alert';
 
 const FormSchema = z.object({
     title: z.string().min(1, {
@@ -83,6 +84,9 @@ const Profile = ({ isLoggedIn, setIsLoggedIn, router }) => {
     }
 
     const [inputLink, setInputLink] = useState("");
+    const [isAddWishlistDialogOpen, setIsAddWishlistDialogOpen] = useState(false);
+    const [isAddingToWishlist, setIsAddingToWishlist] = useState(false);
+    const [isRemovingFromWishlist, setIsRemovingFromWishlist] = useState(false);
 
     const [links, setLinks] = useState([])
 
@@ -107,53 +111,64 @@ const Profile = ({ isLoggedIn, setIsLoggedIn, router }) => {
     };
 
     const removeWishlist = async (itemId) => {
-        try {
-            const userId = userData.userId;
-            const token = localStorage.getItem('secret-santa-login-token');
-            await axios.delete(
-                `${process.env.NEXT_PUBLIC_API_URL}/users/delete-wishlist/${userId}/${itemId}`,
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                }
-            );
-            const updatedWishlist = wishlist.filter((item) => item._id !== itemId);
-            setWishlist(updatedWishlist);
-        } catch (error) {
-            console.error('Error deleting wishlist item', error);
-        }
+        setIsRemovingFromWishlist(true)
+        setTimeout(async () => {
+            try {
+                const userId = userData.userId;
+                const token = localStorage.getItem('secret-santa-login-token');
+                await axios.delete(
+                    `${process.env.NEXT_PUBLIC_API_URL}/users/delete-wishlist/${userId}/${itemId}`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    }
+                );
+                const updatedWishlist = wishlist.filter((item) => item._id !== itemId);
+                setIsRemovingFromWishlist(false)
+                setWishlist(updatedWishlist);
+            } catch (error) {
+                console.error('Error deleting wishlist item', error);
+                setIsRemovingFromWishlist(false)
+            }
+        }, 1000);
     };
-
-
 
     const onSubmit = async (data) => {
 
         data['links'] = links;
 
-        try {
-            const userId = userData.userId;
-            const token = localStorage.getItem('secret-santa-login-token');
+        setIsAddingToWishlist(true)
 
-            const response = await axios.post(
-                `${process.env.NEXT_PUBLIC_API_URL}/users/add-wishlist/${userId}`,
-                data,
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
+        setTimeout(async () => {
+            try {
+                const userId = userData.userId;
+                const token = localStorage.getItem('secret-santa-login-token');
+
+                const response = await axios.post(
+                    `${process.env.NEXT_PUBLIC_API_URL}/users/add-wishlist/${userId}`,
+                    data,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    }
+                );
+
+                if (response.status === 201) {
+                    const newItem = response.data.data;
+                    setWishlist((prevWishlist) => [...prevWishlist, newItem]);
+                    setIsAddingToWishlist(false)
+                    setIsAddWishlistDialogOpen(false)
+                } else {
+                    setIsAddingToWishlist(false)
+                    console.error('Error adding wishlist item');
                 }
-            );
-
-            if (response.status === 201) {
-                const newItem = response.data.data;
-                setWishlist((prevWishlist) => [...prevWishlist, newItem]);
-            } else {
-                console.error('Error adding wishlist item');
+            } catch (error) {
+                setIsAddingToWishlist(false)
+                console.error('Error adding wishlist item', error);
             }
-        } catch (error) {
-            console.error('Error adding wishlist item', error);
-        }
+        }, 1000);
     };
 
 
@@ -190,11 +205,11 @@ const Profile = ({ isLoggedIn, setIsLoggedIn, router }) => {
                             <CardDescription>{`A wishlist will assist the participant who picks you in making a thoughtful gift choice.`}</CardDescription>
                         </div>
 
-                        <Dialog>
+                        <Dialog open={isAddWishlistDialogOpen}>
                             {
                                 isAfterTargetDate ? (
                                     <DialogTrigger asChild>
-                                        <Button className="ms-8" variant="outline">
+                                        <Button className="ms-8" variant="outline" onClick={() => setIsAddWishlistDialogOpen(true)}>
                                             Add item
                                         </Button>
                                     </DialogTrigger>
@@ -265,9 +280,20 @@ const Profile = ({ isLoggedIn, setIsLoggedIn, router }) => {
                                                 })
                                             }
                                         </div>
-                                        <Separator className="mt-5 mb-3" />
+                                        <Separator className="mt-5 mb-5" />
                                         <DialogFooter className="mt-6">
-                                            <Button type="submit">Save</Button>
+                                            <Button type="submit" disabled={isAddingToWishlist}>
+                                                {
+                                                    isAddingToWishlist ? (
+                                                        <>
+                                                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                                            <Label>Adding to wishlist</Label>
+                                                        </>
+                                                    ) : (
+                                                        'Save'
+                                                    )
+                                                }
+                                            </Button>
                                         </DialogFooter>
                                     </form>
                                 </Form>
@@ -352,7 +378,23 @@ const Profile = ({ isLoggedIn, setIsLoggedIn, router }) => {
                                                 </DialogDescription>
                                             </DialogHeader>
                                             <DialogFooter>
-                                                <Button onClick={() => removeWishlist(item._id)} type="button" className="bg-red-700 hover:bg-red-800">Remove</Button>
+                                                <Button
+                                                    onClick={() => removeWishlist(item._id)}
+                                                    type="button"
+                                                    className="bg-red-700 hover:bg-red-800"
+                                                    disabled={isRemovingFromWishlist}
+                                                >
+                                                    {
+                                                        isRemovingFromWishlist ? (
+                                                            <>
+                                                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                                                <Label>Removing from wishlist</Label>
+                                                            </>
+                                                        ) : (
+                                                            'Remove'
+                                                        )
+                                                    }
+                                                </Button>
                                             </DialogFooter>
                                         </DialogContent>
                                     </Dialog>

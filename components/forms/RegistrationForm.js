@@ -13,6 +13,8 @@ import { useState } from "react"
 import axios from "axios"
 import { useAuth } from "@/context/AuthContext"
 import { useRouter } from "next/navigation"
+import { Label } from "../ui/label"
+import Link from "next/link"
 
 const FormSchema = z.object({
     name: z.string().min(2, {
@@ -35,9 +37,9 @@ const RegistrationForm = () => {
     const form = useForm({
         resolver: zodResolver(FormSchema),
         defaultValues: {
-            name: "Participant 1",
-            codeName: "participant_1",
-            password: "Serking28;",
+            name: "",
+            codeName: "",
+            password: "",
         },
     })
 
@@ -45,6 +47,7 @@ const RegistrationForm = () => {
     const [registrationError, setRegistrationError] = useState(null);
     const [registrationSuccess, setRegistrationSuccess] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [fetchStatus, setFetchStatus] = useState(true);
 
     const togglePassword = () => setIsPasswordShown(!isPasswordShown);
 
@@ -168,26 +171,49 @@ const RegistrationForm = () => {
                         </div>
                     </div>
 
-                    <Alert className="mt-7 mb-5">
-                        <Megaphone className="h-4 w-4" />
-                        <AlertTitle className="font-bold">Disclaimer</AlertTitle>
-                        {/* <AlertDescription>
-                            Please note that I, Serking, is not liable for the data you provide, including your password, real name, or code name. Your information is kept secure, your password and code name remain private to you, but you should exercise caution.
-                        </AlertDescription> */}
-                        <AlertDescription>
-                            The developer is <span className="font-bold">not</span> liable for the data you provide; including, but not limited to your real name, code name and password. Rest assured your information is kept secure and your password and real name <span className="font-bold">remain private to you</span>, but you should still exercise caution.
-                        </AlertDescription>
-                    </Alert>
+                    {
+                        !fetchStatus && (
+                            <Alert className="mt-7 mb-5">
+                                <Megaphone className="h-4 w-4" />
+                                <AlertTitle className="font-bold">Disclaimer</AlertTitle>
+                                <AlertDescription>
+                                    The developer is <span className="font-bold">not</span> liable for the data you provide; including, but not limited to your real name, code name and password. Rest assured your information is kept secure and your password and real name <span className="font-bold">remain private to you</span>, but you should still exercise caution.
+                                </AlertDescription>
+                            </Alert>
+                        )
+                    }
+
+                    {
+                        fetchStatus && (
+                            <div className="mt-7">
+                                <p className="text-xs text-center mb-3">{"Creating an account is taking too long than normal. This could be due to the speed of your internet connection or a server problem in general. Please don't close the page and wait patiently."}</p>
+                                <p className="text-xs text-center mb-3">For the meantime, why not <Link href="https://speedtest.net" target="_blank" className="text-blue-500 underline">test your internet connection speed</Link>?</p>
+                            </div>
+                        )
+                    }
 
                     <Button type="submit" className="w-full my-6" disabled={isSubmitting}>
                         {
                             isSubmitting ? (
-                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                <>
+                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                    <Label>Creating your account</Label>
+                                </>
                             ) : (
                                 'Register'
                             )
                         }
                     </Button>
+
+                    {/* {
+                        fetchStatus && (
+                            <>
+                                <p className="text-xs text-center mb-3">{"Registration is taking too long than normal. This could be due to the speed of your internet connection or a server problem in general. Please don't close the page and wait patiently."}</p>
+                                <p className="text-xs text-center mb-3">For the meantime, why not <Link href="https://speedtest.net" target="_blank" className="text-blue-500 underline">test your internet connection speed</Link>?</p>
+                            </>
+                        )
+                    } */}
+
                 </form>
             </Form>
         </div>

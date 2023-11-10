@@ -294,7 +294,7 @@ const ParticipantPicker = () => {
                                                 <DialogHeader>
                                                     <DialogTitle className="mb-2">Why picking a participant is not yet allowed?</DialogTitle>
                                                     <DialogDescription>
-                                                        {`Picking participants is not allowed until until ${targetDate.toLocaleDateString('en-US', {
+                                                        {`Picking participants is not allowed until ${targetDate.toLocaleDateString('en-US', {
                                                             year: 'numeric',
                                                             month: 'long',
                                                             day: 'numeric',

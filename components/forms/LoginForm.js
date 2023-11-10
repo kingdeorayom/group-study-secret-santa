@@ -17,8 +17,8 @@ import Link from "next/link"
 import { Label } from "../ui/label"
 
 const FormSchema = z.object({
-    codeName: z.string().min(4, {
-        message: "Code name must be at least 4 characters.",
+    codeName: z.string().min(1, {
+        message: "Code name is required. It must also be at least 1 character.",
     }),
     password: z.string().min(6, {
         message: "Password must be at least 8 characters.",

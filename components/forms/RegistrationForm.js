@@ -20,8 +20,8 @@ const FormSchema = z.object({
     name: z.string().min(2, {
         message: "Name must be at least 2 characters.",
     }),
-    codeName: z.string().min(4, {
-        message: "Code name must be at least 4 characters.",
+    codeName: z.string().min(1, {
+        message: "Code name must be at least 1 character.",
     }),
     password: z.string().min(8, {
         message: "Password must be at least 8 characters.",
@@ -53,12 +53,23 @@ const RegistrationForm = () => {
 
     const onSubmit = async (data) => {
         setIsSubmitting(true);
+        let timeoutId;
+
         try {
+
+            timeoutId = setTimeout(() => {
+                setFetchStatus(true);
+            }, 2000);
+
             const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/users/register`, data, {
                 headers: {
                     'Content-Type': 'application/json',
                 },
             });
+
+            // Clear the timer as the response is received within 5 seconds
+            clearTimeout(timeoutId);
+
             if (response.status === 200) {
                 setRegistrationSuccess(true);
                 setRegistrationError(null);
@@ -72,10 +83,17 @@ const RegistrationForm = () => {
             }
         } catch (error) {
             console.log(error)
-            setRegistrationError(error.response.data.message);
-            setRegistrationSuccess(false);
+            if (error.response && error.response.data) {
+                setRegistrationError(error.response.data.message);
+                setRegistrationSuccess(false);
+            } else {
+                setRegistrationError("An error occurred during registration.");
+                setRegistrationSuccess(false);
+            }
             setIsSubmitting(false);
         } finally {
+            clearTimeout(timeoutId);
+            setFetchStatus(false);
             setIsSubmitting(false);
         }
     }

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { Button } from "@/components/ui/button";
-import { CheckCheckIcon, CheckCircle, CheckCircle2, Loader2, X, XCircle } from 'lucide-react'
+import { Loader2, X } from 'lucide-react'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from './ui/separator';
@@ -18,7 +18,6 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { zodResolver } from "@hookform/resolvers/zod"
 import axios from "axios"
 import { useAuth } from '@/context/AuthContext';
-import { Alert, AlertDescription, AlertTitle } from './ui/alert';
 
 const FormSchema = z.object({
     title: z.string().min(1, {
@@ -205,7 +204,7 @@ const Profile = ({ isLoggedIn, setIsLoggedIn, router }) => {
                             <CardDescription>{`A wishlist will assist the participant who picks you in making a thoughtful gift choice.`}</CardDescription>
                         </div>
 
-                        <Dialog open={isAddWishlistDialogOpen}>
+                        <Dialog open={isAddWishlistDialogOpen} onOpenChange={setIsAddWishlistDialogOpen}>
                             {
                                 isAfterTargetDate ? (
                                     <DialogTrigger asChild>
@@ -305,7 +304,11 @@ const Profile = ({ isLoggedIn, setIsLoggedIn, router }) => {
                 <Separator />
                 <CardFooter className="flex justify-between mt-5">
                     <Label className="font-light text-xs">
-                        {"Note that you won't be able to add a wishlist starting Saturday, December 2, 2023"}
+                        {`Note that you won't be able to add a wishlist starting ${targetDate.toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric',
+                        })}`}
                     </Label>
                 </CardFooter>
             </Card>
@@ -405,7 +408,7 @@ const Profile = ({ isLoggedIn, setIsLoggedIn, router }) => {
                 )
             }
 
-        </section>
+        </section >
     )
 }
 

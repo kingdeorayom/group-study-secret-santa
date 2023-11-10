@@ -64,8 +64,8 @@ const Profile = ({ isLoggedIn, setIsLoggedIn, router }) => {
     const form = useForm({
         resolver: zodResolver(FormSchema),
         defaultValues: {
-            title: "Wishlist 1",
-            priority: "High",
+            title: "",
+            priority: "",
             links: []
         },
     })

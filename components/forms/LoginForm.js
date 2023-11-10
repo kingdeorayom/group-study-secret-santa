@@ -18,9 +18,9 @@ import { Label } from "../ui/label"
 
 const FormSchema = z.object({
     codeName: z.string().min(1, {
-        message: "Code name is required. It must also be at least 1 character.",
+        message: "Code name is required.",
     }),
-    password: z.string().min(6, {
+    password: z.string().min(8, {
         message: "Password must be at least 8 characters.",
     }),
 })

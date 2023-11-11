@@ -86,6 +86,7 @@ const Profile = ({ isLoggedIn, setIsLoggedIn, router }) => {
     const [isAddWishlistDialogOpen, setIsAddWishlistDialogOpen] = useState(false);
     const [isAddingToWishlist, setIsAddingToWishlist] = useState(false);
     const [isRemovingFromWishlist, setIsRemovingFromWishlist] = useState(false);
+    const [fetchStatus, setFetchStatus] = useState(false);
 
     const [links, setLinks] = useState([])
 
@@ -111,8 +112,15 @@ const Profile = ({ isLoggedIn, setIsLoggedIn, router }) => {
 
     const removeWishlist = async (itemId) => {
         setIsRemovingFromWishlist(true)
+        let timeoutId;
+
         setTimeout(async () => {
             try {
+
+                timeoutId = setTimeout(() => {
+                    setFetchStatus(true);
+                }, 5000);
+
                 const userId = userData.userId;
                 const token = localStorage.getItem('secret-santa-login-token');
                 await axios.delete(
@@ -123,12 +131,22 @@ const Profile = ({ isLoggedIn, setIsLoggedIn, router }) => {
                         },
                     }
                 );
+                // Clear the timer as the response is received within 5 seconds
+                clearTimeout(timeoutId);
                 const updatedWishlist = wishlist.filter((item) => item._id !== itemId);
                 setIsRemovingFromWishlist(false)
                 setWishlist(updatedWishlist);
             } catch (error) {
-                console.error('Error deleting wishlist item', error);
+                if (error.response && error.response.data) {
+                    console.error(error.response.data.message);
+                } else {
+                    console.error("An error occurred while removing an item from your wishlist.");
+                }
                 setIsRemovingFromWishlist(false)
+                // console.error('Error deleting wishlist item', error);
+            } finally {
+                clearTimeout(timeoutId);
+                setFetchStatus(false);
             }
         }, 1000);
     };
@@ -138,9 +156,15 @@ const Profile = ({ isLoggedIn, setIsLoggedIn, router }) => {
         data['links'] = links;
 
         setIsAddingToWishlist(true)
+        let timeoutId;
 
         setTimeout(async () => {
             try {
+
+                timeoutId = setTimeout(() => {
+                    setFetchStatus(true);
+                }, 5000);
+
                 const userId = userData.userId;
                 const token = localStorage.getItem('secret-santa-login-token');
 
@@ -154,6 +178,9 @@ const Profile = ({ isLoggedIn, setIsLoggedIn, router }) => {
                     }
                 );
 
+                // Clear the timer as the response is received within 5 seconds
+                clearTimeout(timeoutId);
+
                 if (response.status === 201) {
                     const newItem = response.data.data;
                     setWishlist((prevWishlist) => [...prevWishlist, newItem]);
@@ -164,8 +191,17 @@ const Profile = ({ isLoggedIn, setIsLoggedIn, router }) => {
                     console.error('Error adding wishlist item');
                 }
             } catch (error) {
+
+                if (error.response && error.response.data) {
+                    console.error(error.response.data.message);
+                } else {
+                    console.error("An error occurred while adding an item to your wishlist.");
+                }
                 setIsAddingToWishlist(false)
-                console.error('Error adding wishlist item', error);
+                // console.error('Error adding wishlist item', error);
+            } finally {
+                clearTimeout(timeoutId);
+                setFetchStatus(false);
             }
         }, 1000);
     };
@@ -286,7 +322,7 @@ const Profile = ({ isLoggedIn, setIsLoggedIn, router }) => {
                                                     isAddingToWishlist ? (
                                                         <>
                                                             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                                            <Label>Adding to wishlist</Label>
+                                                            <Label>{fetchStatus ? 'Taking longer than usual. Please wait...' : 'Adding to wishlist'}</Label>
                                                         </>
                                                     ) : (
                                                         'Save'
@@ -391,7 +427,7 @@ const Profile = ({ isLoggedIn, setIsLoggedIn, router }) => {
                                                         isRemovingFromWishlist ? (
                                                             <>
                                                                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                                                <Label>Removing from wishlist</Label>
+                                                                <Label>{fetchStatus ? 'Taking longer than usual. Please wait...' : 'Removing from wishlist'}</Label>
                                                             </>
                                                         ) : (
                                                             'Remove'

@@ -26,9 +26,10 @@ const ParticipantPicker = () => {
     const [hasPicked, setHasPicked] = useState(userData.hasPicked)
     const [recipientData, setRecipientData] = useState([])
     const [wishlist, setWishlist] = useState([])
+    const [fetchStatus, setFetchStatus] = useState(false);
 
     const currentDate = new Date();
-    const targetDate = new Date('November 25, 2023');
+    const targetDate = new Date('November 10, 2023');
 
     const isButtonDisabled = currentDate < targetDate;
 
@@ -61,9 +62,15 @@ const ParticipantPicker = () => {
     const handlePick = async () => {
 
         setIsPicking(true)
+        let timeoutId;
 
         setTimeout(async () => {
+
             try {
+                timeoutId = setTimeout(() => {
+                    setFetchStatus(true);
+                }, 5000);
+
                 const userId = userData.userId;
                 const token = localStorage.getItem('secret-santa-login-token');
 
@@ -76,6 +83,9 @@ const ParticipantPicker = () => {
                     }
                 );
 
+                // Clear the timer as the response is received within 5 seconds
+                clearTimeout(timeoutId);
+
                 if (response.status === 200) {
                     setIsPicking(false)
                     setHasPicked(true)
@@ -87,8 +97,16 @@ const ParticipantPicker = () => {
                     setIsPicking(false)
                 }
             } catch (error) {
-                console.error('Error picking a participant:', error);
+                if (error.response && error.response.data) {
+                    console.error('Error picking a participant:', error);
+                } else {
+                    console.error("An error occurred while picking a participant.");
+                }
                 setIsPicking(false)
+            } finally {
+                clearTimeout(timeoutId);
+                setFetchStatus(false);
+                setIsPicking(false);
             }
         }, 5000);
     }
@@ -243,9 +261,19 @@ const ParticipantPicker = () => {
                                     className='w-48 h-48 object-contain'
                                     alt='Picking participant'
                                 />
-                                <p className="text-sm font-light">
-                                    Picking a participant. Please wait...
-                                </p>
+
+                                {
+                                    fetchStatus ?
+                                        <>
+                                            <p className="text-sm font-light mb-2">
+                                                {"Taking longer than usual. Please be patient..."}
+                                            </p>
+                                            <p className="text-sm font-light">{"Don't close the page as it may interrupt the picking process."}</p>
+                                        </> :
+                                        <p className="text-sm font-light">
+                                            Picking a participant. Please wait...
+                                        </p>
+                                }
                             </div>
                         </div>
                     ) :

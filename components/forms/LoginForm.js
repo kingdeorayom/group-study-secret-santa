@@ -54,7 +54,7 @@ const LoginForm = () => {
 
             timeoutId = setTimeout(() => {
                 setFetchStatus(true);
-            }, 2000);
+            }, 5000);
 
             const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/users/login`, data, {
                 headers: {

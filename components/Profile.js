@@ -53,6 +53,10 @@ const Profile = ({ isLoggedIn, setIsLoggedIn, router }) => {
             setWishlist(fetchedWishlist); // Update the state with the fetched data
         } catch (error) {
             console.error('Error fetching user wishlist', error);
+            // updateUserData(null) // remove if misbehaved
+            localStorage.removeItem('secret-santa-login-token');
+            localStorage.removeItem('secret-santa-user-data');
+            router.push('/') // remove if misbehaved
         }
     }
 

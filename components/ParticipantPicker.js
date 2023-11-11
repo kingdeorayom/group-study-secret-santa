@@ -17,8 +17,11 @@ import { Badge } from './ui/badge'
 import Link from 'next/link'
 import { useAuth } from '@/context/AuthContext';
 import axios from "axios"
+import { useRouter } from 'next/navigation'
 
 const ParticipantPicker = () => {
+
+    const router = useRouter()
 
     const { userData, updateUserData } = useAuth();
 
@@ -49,6 +52,10 @@ const ParticipantPicker = () => {
             }
         } catch (error) {
             console.error('Error fetching recipient data', error);
+            // updateUserData(null) // remove if misbehaved
+            localStorage.removeItem('secret-santa-login-token');
+            localStorage.removeItem('secret-santa-user-data');
+            router.push('/') // remove if misbehaved
         }
     }
 

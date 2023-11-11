@@ -99,6 +99,8 @@ const ParticipantPicker = () => {
                     localStorage.setItem('secret-santa-user-data', JSON.stringify(response.data.pickerDetails));
                     updateUserData(response.data.pickerDetails)
                     setRecipientData(response.data.recipientDetails)
+                    clearTimeout(timeoutId);
+                    setFetchStatus(false);
                 } else {
                     console.error('Error picking.');
                     setIsPicking(false)

@@ -47,7 +47,7 @@ const RegistrationForm = () => {
     const [registrationError, setRegistrationError] = useState(null);
     const [registrationSuccess, setRegistrationSuccess] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [fetchStatus, setFetchStatus] = useState(true);
+    const [fetchStatus, setFetchStatus] = useState(false);
 
     const togglePassword = () => setIsPasswordShown(!isPasswordShown);
 
@@ -202,11 +202,12 @@ const RegistrationForm = () => {
                     }
 
                     {
-                        fetchStatus ?
+                        fetchStatus && (
                             <div className="mt-7">
                                 <p className="text-xs text-center mb-3">{"Creating an account is taking too long than normal. This could be due to the speed of your internet connection or a server problem in general. Please don't close the page and wait patiently."}</p>
                                 <p className="text-xs text-center mb-3">For the meantime, why not <Link href="https://speedtest.net" target="_blank" className="text-blue-500 underline">test your internet connection speed</Link>?</p>
-                            </div> : null
+                            </div>
+                        )
                     }
 
                     <Button type="submit" className="w-full my-6" disabled={isSubmitting}>

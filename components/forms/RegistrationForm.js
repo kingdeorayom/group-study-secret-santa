@@ -204,7 +204,7 @@ const RegistrationForm = () => {
                     {
                         fetchStatus && (
                             <div className="mt-7">
-                                <p className="text-xs text-center mb-3">{"Creating an account is taking too long than normal. This could be due to the speed of your internet connection or a server problem in general. Please don't close the page and wait patiently."}</p>
+                                <p className="text-xs text-center mb-3">{"Creating an account is taking longer than usual. This could be due to the speed of your internet connection or a server problem in general. Please don't close the page and wait patiently."}</p>
                                 <p className="text-xs text-center mb-3">For the meantime, why not <Link href="https://speedtest.net" target="_blank" className="text-blue-500 underline">test your internet connection speed</Link>?</p>
                             </div>
                         )

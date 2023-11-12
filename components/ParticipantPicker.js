@@ -43,10 +43,9 @@ const ParticipantPicker = () => {
         const token = localStorage.getItem('secret-santa-login-token');
         let timeoutId;
         setIsFetchingRecipientData(true)
-        console.log("hey")
         try {
             timeoutId = setTimeout(() => {
-                setFetchStatus(true);
+                setRecipientDataFetchStatus(true);
             }, 5000);
 
             const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/users/${recipientId}`, {
@@ -82,7 +81,6 @@ const ParticipantPicker = () => {
 
     useEffect(() => {
         if (userData && userData.recipient) {
-            console.log('i ran')
             getRecipientDetails();
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -141,8 +139,6 @@ const ParticipantPicker = () => {
             }
         }, 5000);
     }
-
-    console.log(isFetchingRecipientData)
 
     return (
         <section className="max-w-lg mx-auto">

@@ -69,7 +69,7 @@ const Profile = ({ isLoggedIn, setIsLoggedIn, router }) => {
         resolver: zodResolver(FormSchema),
         defaultValues: {
             title: "",
-            priority: "",
+            priority: "High",
             links: []
         },
     })

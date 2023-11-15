@@ -34,7 +34,7 @@ const ParticipantPicker = () => {
     const [isFetchingRecipientData, setIsFetchingRecipientData] = useState(false);
 
     const currentDate = new Date();
-    const targetDate = new Date('November 10, 2023');
+    const targetDate = new Date('November 16, 2023');
 
     const isButtonDisabled = currentDate < targetDate;
 

@@ -43,40 +43,42 @@ const ParticipantPicker = () => {
         const token = localStorage.getItem('secret-santa-login-token');
         let timeoutId;
         setIsFetchingRecipientData(true)
-        try {
-            timeoutId = setTimeout(() => {
-                setRecipientDataFetchStatus(true);
-            }, 5000);
+        setTimeout(async () => {
+            try {
+                timeoutId = setTimeout(() => {
+                    setRecipientDataFetchStatus(true);
+                }, 5000);
 
-            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/users/${recipientId}`, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
+                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/users/${recipientId}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
 
-            // Clear the timer as the response is received within 5 seconds
-            clearTimeout(timeoutId);
+                // Clear the timer as the response is received within 5 seconds
+                clearTimeout(timeoutId);
 
-            if (response.status === 200) {
-                const fetchedRecipientDetails = response.data;
+                if (response.status === 200) {
+                    const fetchedRecipientDetails = response.data;
+                    clearTimeout(timeoutId);
+                    setRecipientDataFetchStatus(false);
+                    setRecipientData(fetchedRecipientDetails)
+                    setWishlist(fetchedRecipientDetails.wishlists)
+                    setIsFetchingRecipientData(false)
+                }
+            } catch (error) {
+                console.error('Error fetching recipient data', error);
+                setIsFetchingRecipientData(false)
+                // updateUserData(null) // remove if misbehaved
+                localStorage.removeItem('secret-santa-login-token');
+                localStorage.removeItem('secret-santa-user-data');
+                router.push('/') // remove if misbehaved
+            } finally {
                 clearTimeout(timeoutId);
                 setRecipientDataFetchStatus(false);
-                setRecipientData(fetchedRecipientDetails)
-                setWishlist(fetchedRecipientDetails.wishlists)
                 setIsFetchingRecipientData(false)
             }
-        } catch (error) {
-            console.error('Error fetching recipient data', error);
-            setIsFetchingRecipientData(false)
-            // updateUserData(null) // remove if misbehaved
-            localStorage.removeItem('secret-santa-login-token');
-            localStorage.removeItem('secret-santa-user-data');
-            router.push('/') // remove if misbehaved
-        } finally {
-            clearTimeout(timeoutId);
-            setRecipientDataFetchStatus(false);
-            setIsFetchingRecipientData(false)
-        }
+        }, 1000);
     }
 
     useEffect(() => {

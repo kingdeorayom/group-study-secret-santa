@@ -74,6 +74,8 @@ const Profile = ({ isLoggedIn, setIsLoggedIn, router }) => {
         },
     })
 
+    const { reset } = form
+
     const handleLogout = () => {
         if (isLoggedIn) {
             setIsLoggedIn(false);
@@ -190,6 +192,9 @@ const Profile = ({ isLoggedIn, setIsLoggedIn, router }) => {
                     setWishlist((prevWishlist) => [...prevWishlist, newItem]);
                     setIsAddingToWishlist(false)
                     setIsAddWishlistDialogOpen(false)
+                    reset()
+                    setInputLink("")
+                    setLinks([])
                 } else {
                     setIsAddingToWishlist(false)
                     console.error('Error adding wishlist item');
@@ -248,7 +253,17 @@ const Profile = ({ isLoggedIn, setIsLoggedIn, router }) => {
                             {
                                 isAfterTargetDate ? (
                                     <DialogTrigger asChild>
-                                        <Button className="ms-8" variant="outline" onClick={() => setIsAddWishlistDialogOpen(true)}>
+                                        <Button
+                                            className="ms-8"
+                                            variant="outline"
+                                            onClick={() => {
+                                                setIsAddWishlistDialogOpen(true)
+                                                reset()
+                                                setInputLink("")
+                                                setLinks([])
+                                            }
+                                            }
+                                        >
                                             Add item
                                         </Button>
                                     </DialogTrigger>

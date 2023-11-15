@@ -210,7 +210,12 @@ const RegistrationForm = () => {
                         )
                     }
 
-                    <Button type="submit" className="w-full my-6" disabled={isSubmitting}>
+                    <Button
+                        type="submit"
+                        className="w-full my-6"
+                        // disabled={isSubmitting}
+                        disabled
+                    >
                         {
                             isSubmitting ? (
                                 <>
@@ -218,7 +223,8 @@ const RegistrationForm = () => {
                                     <Label>Creating your account</Label>
                                 </>
                             ) : (
-                                'Register'
+                                // 'Register'
+                                'Registration temporarily disabled'
                             )
                         }
                     </Button>

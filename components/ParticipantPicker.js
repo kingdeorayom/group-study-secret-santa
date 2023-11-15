@@ -171,6 +171,11 @@ const ParticipantPicker = () => {
                                             recipientData && recipientData.codeName && (
                                                 <CardTitle className="mb-1">
                                                     {`${recipientData.codeName}`}
+                                                    <div>
+                                                        <Label className="font-light text-xs opacity-50">
+                                                            {`Picker ID: ${userData.userId}`}
+                                                        </Label>
+                                                    </div>
                                                 </CardTitle>
                                             )
                                         )
@@ -185,7 +190,7 @@ const ParticipantPicker = () => {
                                             <DialogHeader>
                                                 <DialogTitle className="mb-2">Shuffling Method</DialogTitle>
                                                 <DialogDescription>
-                                                    The selection of participants has been randomized utilizing the Fisher-Yates shuffle algorithm. This technique ensures an equitable and unbiased arrangement of participants, ensuring that the order of the participants is genuinely random. Be assured that the outcome is not predetermined, and each participant has an equal opportunity to appear in any position.
+                                                    {"The selection of participants has been randomized utilizing the Fisher-Yates shuffle algorithm. This technique ensures an equitable and unbiased arrangement of participants, ensuring that the order of the participants is genuinely random. Be assured that the outcome is not predetermined, and each participant has an equal opportunity to appear in any position. A print of the picker's id, which is you, is also shown for reference should any confusion arise during the event."}
                                                 </DialogDescription>
                                             </DialogHeader>
                                         </DialogContent>

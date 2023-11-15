@@ -18,6 +18,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { zodResolver } from "@hookform/resolvers/zod"
 import axios from "axios"
 import { useAuth } from '@/context/AuthContext';
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue, } from "@/components/ui/select"
 
 const FormSchema = z.object({
     title: z.string().min(1, {
@@ -291,19 +292,34 @@ const Profile = ({ isLoggedIn, setIsLoggedIn, router }) => {
                                                 </FormItem>
                                             )}
                                         />
+
                                         <FormField
                                             control={form.control}
-                                            name="priority"
+                                            name='priority'
                                             render={({ field }) => (
                                                 <FormItem className="mb-2 mt-3">
                                                     <FormLabel className="font-bold">Priority</FormLabel>
-                                                    <FormControl>
-                                                        <Input placeholder="Select item priority" {...field} />
-                                                    </FormControl>
-                                                    <FormMessage />
+                                                    <Select onValueChange={(value) => field.onChange(value)} value={field.value}>
+                                                        <FormControl>
+                                                            <SelectTrigger>
+                                                                <SelectValue
+                                                                    {...field}
+                                                                />
+                                                            </SelectTrigger>
+                                                        </FormControl>
+                                                        <SelectContent>
+                                                            <SelectGroup>
+                                                                <SelectLabel>Select priority</SelectLabel>
+                                                                <SelectItem value="High">High</SelectItem>
+                                                                <SelectItem value="Medium">Medium</SelectItem>
+                                                                <SelectItem value="Low">Low</SelectItem>
+                                                            </SelectGroup>
+                                                        </SelectContent>
+                                                    </Select>
                                                 </FormItem>
                                             )}
                                         />
+
                                         <Separator className="mt-5 mb-3" />
                                         <FormLabel className="font-bold">Links</FormLabel>
                                         <div className="flex items-center">

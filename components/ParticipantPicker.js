@@ -407,7 +407,7 @@ const ParticipantPicker = () => {
                                                             year: 'numeric',
                                                             month: 'long',
                                                             day: 'numeric',
-                                                        })} to ensure a fair and unbiased drawing process. Allowing at least one user to pick earlier might lead to an insufficient number of available participants, potentially disrupting the intended randomness of the selection. By waiting until the specified date, we aim to maximize participation and maintain the integrity of the participant drawing.`}
+                                                        })} to ensure a fair and unbiased drawing process. Allowing at least one user to pick earlier before the other participants create their account might lead to an insufficient number of available participants, potentially disrupting the intended randomness of the selection. By waiting until the specified date, we aim to maximize participation and maintain the integrity of the participant drawing.`}
                                                     </DialogDescription>
                                                 </DialogHeader>
                                             </DialogContent>

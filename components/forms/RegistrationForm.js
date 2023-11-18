@@ -213,8 +213,8 @@ const RegistrationForm = () => {
                     <Button
                         type="submit"
                         className="w-full my-6"
-                        // disabled={isSubmitting}
-                        disabled
+                        disabled={isSubmitting}
+                    // disabled
                     >
                         {
                             isSubmitting ? (
@@ -223,8 +223,8 @@ const RegistrationForm = () => {
                                     <Label>Creating your account</Label>
                                 </>
                             ) : (
-                                // 'Register'
-                                'Registration temporarily disabled by Serking'
+                                'Register'
+                                // 'Registration temporarily disabled by Serking'
                             )
                         }
                     </Button>

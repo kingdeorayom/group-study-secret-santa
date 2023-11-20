@@ -155,7 +155,7 @@ const LoginForm = () => {
                             isSubmitting ? (
                                 <>
                                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                    <Label>Logging in</Label>
+                                    <Label>{fetchStatus ? 'Taking longer than usual. Please wait...' : 'Logging in'}</Label>
                                 </>
                             ) : (
                                 'Log in'

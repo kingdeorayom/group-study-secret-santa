@@ -220,7 +220,7 @@ const RegistrationForm = () => {
                             isSubmitting ? (
                                 <>
                                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                    <Label>Creating your account</Label>
+                                    <Label>{fetchStatus ? 'Taking longer than usual. Please wait...' : 'Creating your account'}</Label>
                                 </>
                             ) : (
                                 'Register'

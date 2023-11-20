@@ -243,8 +243,13 @@ const ParticipantPicker = () => {
                         <CardHeader>
                             <div className="flex justify-between items-center">
                                 <div>
-                                    <CardTitle className="mb-1">
+                                    <CardTitle className="">
                                         {`${recipientData.codeName}'s wishlist`}
+                                        <div>
+                                            <Label className="font-light text-xs opacity-1">
+                                                {`Mutually agreed price: PHP 1,000.00`}
+                                            </Label>
+                                        </div>
                                     </CardTitle>
                                 </div>
                             </div>

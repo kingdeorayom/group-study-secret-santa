@@ -34,7 +34,7 @@ const ParticipantPicker = () => {
     const [isFetchingRecipientData, setIsFetchingRecipientData] = useState(false);
 
     const currentDate = new Date();
-    const targetDate = new Date('November 25, 2023');
+    const targetDate = new Date('November 26, 2023');
 
     const isButtonDisabled = currentDate < targetDate;
 
@@ -291,9 +291,16 @@ const ParticipantPicker = () => {
                                         <CardContent className="mt-3">
                                             <div className="py-1 rounded-lg">
                                                 <Badge variant="outline">{`${item.priority} Priority`}</Badge>
-                                                <p className="font-semibold mt-2">{`${item.title}`}</p>
+                                                {/* <p className="font-semibold mt-2">{`${item.title}`}</p>
                                                 <Separator className="mt-3 mb-4" />
-                                                <p className="text-xs mt-2 font-semibold me-1">Where you can buy:</p>
+                                                <p className="text-xs mt-2 font-semibold me-1">Where you can buy:</p> */}
+                                                <p className="font-semibold mt-2 mb-2">{`${item.title}`}</p>
+                                                <p className="text-xs mt-2 mb-1 text-slate-500 font-semibold me-1">Additional note for this item:</p>
+                                                <CardDescription className="text-xs text-slate-400">
+                                                    {item.description ? item.description : "No information provided"}
+                                                </CardDescription>
+                                                <Separator className="mt-4 mb-4" />
+                                                <p className="text-xs mt-2 font-semibold me-1">Where you can buy this item:</p>
                                                 {
                                                     item.links.length > 0 ? (
                                                         item.links.map((link, index) => (

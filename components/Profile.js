@@ -19,6 +19,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import axios from "axios"
 import { useAuth } from '@/context/AuthContext';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue, } from "@/components/ui/select"
+import { Textarea } from './ui/textarea';
 
 const FormSchema = z.object({
     title: z.string().min(1, {
@@ -27,6 +28,7 @@ const FormSchema = z.object({
     priority: z.string().min(1, {
         message: "Please select a priority.",
     }),
+    description: z.string(),
 });
 
 const Profile = ({ isLoggedIn, setIsLoggedIn, router }) => {
@@ -90,6 +92,7 @@ const Profile = ({ isLoggedIn, setIsLoggedIn, router }) => {
         defaultValues: {
             title: "",
             priority: "High",
+            description: "",
             links: []
         },
     })
@@ -339,6 +342,21 @@ const Profile = ({ isLoggedIn, setIsLoggedIn, router }) => {
                                             )}
                                         />
 
+                                        <FormField
+                                            control={form.control}
+                                            name="description"
+                                            render={({ field }) => (
+                                                <FormItem className="mb-2 mt-3">
+                                                    <FormLabel className="font-bold">Description</FormLabel>
+                                                    <FormControl>
+                                                        {/* <Input placeholder="Enter description" {...field} /> */}
+                                                        <Textarea placeholder="Add additional notes about the item such as its color, size, or variant" {...field} />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+
                                         <Separator className="mt-5 mb-3" />
                                         <FormLabel className="font-bold">Links</FormLabel>
                                         <div className="flex items-center">
@@ -442,9 +460,13 @@ const Profile = ({ isLoggedIn, setIsLoggedIn, router }) => {
                                         <CardContent className="mt-3">
                                             <div className="py-1 rounded-lg">
                                                 <Badge variant="outline">{`${item.priority} Priority`}</Badge>
-                                                <p className="font-semibold mt-2">{`${item.title}`}</p>
-                                                <Separator className="mt-3 mb-4" />
-                                                <p className="text-xs mt-2 font-semibold me-1">Where you can buy:</p>
+                                                <p className="font-semibold mt-2 mb-2">{`${item.title}`}</p>
+                                                <p className="text-xs mt-2 mb-1 text-slate-500 font-semibold me-1">Additional note for this item:</p>
+                                                <CardDescription className="text-xs text-slate-400">
+                                                    {item.description ? item.description : "No information provided"}
+                                                </CardDescription>
+                                                <Separator className="mt-4 mb-4" />
+                                                <p className="text-xs mt-2 font-semibold me-1">Where they can buy this item:</p>
                                                 {
                                                     item.links.length > 0 ? (
                                                         item.links.map((link, index) => (

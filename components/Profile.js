@@ -612,13 +612,18 @@ const Profile = ({ isLoggedIn, setIsLoggedIn, router }) => {
                     </div>
                 </CardHeader>
                 <Separator />
-                <CardFooter className="flex justify-between mt-5">
+                <CardFooter className="flex justify-between mt-5 pb-2">
                     <Label className="font-light text-xs">
                         {`Note that you won't be able to add a wishlist starting ${targetDate.toLocaleDateString('en-US', {
                             year: 'numeric',
                             month: 'long',
                             day: 'numeric',
                         })}`}
+                    </Label>
+                </CardFooter>
+                <CardFooter className="flex justify-between">
+                    <Label className="font-light text-xs">
+                        {"I apologize for any inconvenience, but currently, you won't be able to edit the details of a wishlist item. If adjustments are needed, I recommend creating a new wishlist item and removing the outdated one. Thank you for your understanding."}
                     </Label>
                 </CardFooter>
             </Card>

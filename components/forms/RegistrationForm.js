@@ -167,7 +167,8 @@ const RegistrationForm = () => {
                                     <Input placeholder="Enter your password" type={isPasswordShown ? "text" : "password"} {...field} />
                                 </FormControl>
                                 <FormDescription className="text-xs mx-1">
-                                    {"Remember your password. You won't be able to change this later."}
+                                    {/* {"Remember your password. You won't be able to change this later."} */}
+                                    Enhance account security with a strong, unique password.
                                 </FormDescription>
                                 <FormMessage />
                             </FormItem>

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { Button } from "@/components/ui/button";
-import { Loader2, X } from 'lucide-react'
+import { Loader2, Terminal, X, XCircle } from 'lucide-react'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from './ui/separator';
@@ -20,8 +20,9 @@ import axios from "axios"
 import { useAuth } from '@/context/AuthContext';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue, } from "@/components/ui/select"
 import { Textarea } from './ui/textarea';
+import { Alert, AlertDescription, AlertTitle } from './ui/alert';
 
-const FormSchema = z.object({
+const AddWishlistSchema = z.object({
     title: z.string().min(1, {
         message: "Please add a title.",
     }),
@@ -29,6 +30,26 @@ const FormSchema = z.object({
         message: "Please select a priority.",
     }),
     description: z.string(),
+});
+
+const ChangePasswordSchema = z.object({
+    currentPassword: z.string().min(8, {
+        message: "Password must be at least 8 characters.",
+    }),
+    newPassword: z.string().min(8, {
+        message: "Password must be at least 8 characters.",
+    }),
+    confirmPassword: z.string().min(8, {
+        message: "Password must be at least 8 characters.",
+    }),
+}).superRefine(({ confirmPassword, newPassword }, ctx) => {
+    if (confirmPassword !== newPassword) {
+        ctx.addIssue({
+            code: "custom",
+            message: "New password and confirm password do not match.",
+            path: ['confirmPassword']
+        });
+    }
 });
 
 const Profile = ({ isLoggedIn, setIsLoggedIn, router }) => {
@@ -87,8 +108,8 @@ const Profile = ({ isLoggedIn, setIsLoggedIn, router }) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const form = useForm({
-        resolver: zodResolver(FormSchema),
+    const addWishlistForm = useForm({
+        resolver: zodResolver(AddWishlistSchema),
         defaultValues: {
             title: "",
             priority: "High",
@@ -97,7 +118,18 @@ const Profile = ({ isLoggedIn, setIsLoggedIn, router }) => {
         },
     })
 
-    const { reset } = form
+    const changePasswordForm = useForm({
+        resolver: zodResolver(ChangePasswordSchema),
+        defaultValues: {
+            currentPassword: "",
+            newPassword: "",
+            confirmPassword: "",
+        },
+    })
+
+    const { reset: resetAddWishlist } = addWishlistForm
+
+    const { reset: resetChangePassword } = changePasswordForm;
 
     const handleLogout = () => {
         if (isLoggedIn) {
@@ -114,8 +146,11 @@ const Profile = ({ isLoggedIn, setIsLoggedIn, router }) => {
     const [inputLink, setInputLink] = useState("");
     const [isAddWishlistDialogOpen, setIsAddWishlistDialogOpen] = useState(false);
     const [isAddingToWishlist, setIsAddingToWishlist] = useState(false);
+    const [isPasswordChanging, setIsPasswordChanging] = useState(false);
     const [isRemovingFromWishlist, setIsRemovingFromWishlist] = useState(false);
     const [fetchStatus, setFetchStatus] = useState(false);
+    const [passwordError, setPasswordError] = useState(null);
+    const [isChangePasswordSuccess, setIsChangePasswordSuccess] = useState(null);
 
     const [links, setLinks] = useState([])
 
@@ -180,7 +215,7 @@ const Profile = ({ isLoggedIn, setIsLoggedIn, router }) => {
         }, 1000);
     };
 
-    const onSubmit = async (data) => {
+    const onSubmitWishlist = async (data) => {
 
         data['links'] = links;
 
@@ -215,7 +250,7 @@ const Profile = ({ isLoggedIn, setIsLoggedIn, router }) => {
                     setWishlist((prevWishlist) => [...prevWishlist, newItem]);
                     setIsAddingToWishlist(false)
                     setIsAddWishlistDialogOpen(false)
-                    reset()
+                    resetAddWishlist()
                     setInputLink("")
                     setLinks([])
                 } else {
@@ -238,6 +273,61 @@ const Profile = ({ isLoggedIn, setIsLoggedIn, router }) => {
         }, 1000);
     };
 
+    const onPasswordChange = async (data) => {
+
+        data['userId'] = userData.userId;
+
+        setIsPasswordChanging(true)
+        let timeoutId;
+
+        setTimeout(async () => {
+            try {
+
+                timeoutId = setTimeout(() => {
+                    setFetchStatus(true);
+                }, 5000);
+
+                const token = localStorage.getItem('secret-santa-login-token');
+
+                const response = await axios.post(
+                    `${process.env.NEXT_PUBLIC_API_URL}/users/change-password`,
+                    data,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    }
+                );
+
+                // Clear the timer as the response is received within 5 seconds
+                clearTimeout(timeoutId);
+
+                if (response.status === 200) {
+                    setIsPasswordChanging(false)
+                    setPasswordError(null);
+                    setIsChangePasswordSuccess("Password changed successfully.")
+                    resetChangePassword()
+                } else {
+                    setIsPasswordChanging(false)
+                    console.error('Error changing password');
+                }
+            } catch (error) {
+
+                if (error.response && error.response.data) {
+                    setPasswordError(error.response.data.message);
+                } else {
+                    setPasswordError("An error occurred while changing your password");
+                }
+                setIsPasswordChanging(false)
+                // console.error('Error adding wishlist item', error);
+            } finally {
+                clearTimeout(timeoutId);
+                setFetchStatus(false);
+            }
+        }, 1000);
+
+    }
+
 
     return (
         <section className="max-w-lg mx-auto">
@@ -251,7 +341,119 @@ const Profile = ({ isLoggedIn, setIsLoggedIn, router }) => {
                             </CardTitle>
                             <CardDescription>
                                 {userData.name}
+                                {/* <div>
+                                    <Label className="font-light text-xs opacity-50">
+                                        {`Picker ID: ${userData.userId}`}
+                                    </Label>
+                                </div> */}
                             </CardDescription>
+
+
+                            <Dialog>
+                                <DialogTrigger asChild>
+                                    <Label className="font-normal underline text-xs cursor-pointer mt-2">
+                                        Change password
+                                    </Label>
+                                </DialogTrigger>
+
+                                <DialogContent className="sm:max-w-[425px]">
+                                    <Form {...changePasswordForm}>
+                                        <form onSubmit={changePasswordForm.handleSubmit(onPasswordChange)}>
+                                            <DialogHeader>
+                                                <DialogTitle>Change your password</DialogTitle>
+                                                <DialogDescription>
+                                                    Enhance account security with a strong, unique password.
+                                                </DialogDescription>
+                                            </DialogHeader>
+                                            {
+                                                passwordError && (
+                                                    <Alert className="mt-5 mb-5">
+                                                        <XCircle className="h-4 w-4" />
+                                                        <AlertTitle className="font-bold">Oops!</AlertTitle>
+                                                        <AlertDescription className="">{passwordError}</AlertDescription>
+                                                    </Alert>
+                                                )
+                                            }
+                                            {
+                                                isChangePasswordSuccess && (
+                                                    <Alert className="mt-5 mb-5">
+                                                        <Terminal className="h-4 w-4" />
+                                                        <AlertTitle className="font-bold">Success!</AlertTitle>
+                                                        <AlertDescription className="">{isChangePasswordSuccess}</AlertDescription>
+                                                    </Alert>
+                                                )
+                                            }
+                                            <FormField
+                                                control={changePasswordForm.control}
+                                                name="currentPassword"
+                                                render={({ field }) => (
+                                                    <FormItem className="mb-2 mt-3">
+                                                        <FormLabel className="font-bold">Current Password</FormLabel>
+                                                        <FormControl>
+                                                            <Input placeholder="Enter your current password" {...field} />
+                                                        </FormControl>
+                                                        <FormMessage />
+                                                    </FormItem>
+                                                )}
+                                            />
+
+                                            <FormField
+                                                control={changePasswordForm.control}
+                                                name="newPassword"
+                                                render={({ field }) => (
+                                                    <FormItem className="mb-2 mt-3">
+                                                        <FormLabel className="font-bold">New Password</FormLabel>
+                                                        <FormControl>
+                                                            <Input placeholder="Enter your new password" {...field} />
+                                                        </FormControl>
+                                                        <FormMessage />
+                                                    </FormItem>
+                                                )}
+                                            />
+
+                                            <FormField
+                                                control={changePasswordForm.control}
+                                                name="confirmPassword"
+                                                render={({ field }) => (
+                                                    <FormItem className="mb-2 mt-3">
+                                                        <FormLabel className="font-bold">Confirm Password</FormLabel>
+                                                        <FormControl>
+                                                            <Input placeholder="Re-enter your new password" {...field} />
+                                                        </FormControl>
+                                                        <FormMessage />
+                                                    </FormItem>
+                                                )}
+                                            />
+
+                                            <Separator className="mt-5 mb-3" />
+
+                                            <DialogFooter className="mt-6">
+                                                <Button type="submit" disabled={isPasswordChanging}>
+                                                    {
+                                                        isPasswordChanging ? (
+                                                            <>
+                                                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                                                <Label>{fetchStatus ? 'Taking longer than usual. Please wait...' : 'Updating your password'}</Label>
+                                                            </>
+                                                        ) : (
+                                                            'Save changes'
+                                                        )
+                                                    }
+                                                </Button>
+                                            </DialogFooter>
+                                        </form>
+                                    </Form>
+                                </DialogContent>
+
+
+
+                            </Dialog>
+
+
+
+
+
+
                         </div>
                         <Button onClick={handleLogout} className="bg-red-700 hover:bg-red-800">Log out</Button>
                     </div>
@@ -281,7 +483,7 @@ const Profile = ({ isLoggedIn, setIsLoggedIn, router }) => {
                                             variant="outline"
                                             onClick={() => {
                                                 setIsAddWishlistDialogOpen(true)
-                                                reset()
+                                                resetAddWishlist()
                                                 setInputLink("")
                                                 setLinks([])
                                             }
@@ -293,8 +495,8 @@ const Profile = ({ isLoggedIn, setIsLoggedIn, router }) => {
                                 ) : null
                             }
                             <DialogContent className="sm:max-w-[425px]">
-                                <Form {...form}>
-                                    <form onSubmit={form.handleSubmit(onSubmit)}>
+                                <Form {...addWishlistForm}>
+                                    <form onSubmit={addWishlistForm.handleSubmit(onSubmitWishlist)}>
                                         <DialogHeader>
                                             <DialogTitle>Add item to your wishlist</DialogTitle>
                                             <DialogDescription>
@@ -302,7 +504,7 @@ const Profile = ({ isLoggedIn, setIsLoggedIn, router }) => {
                                             </DialogDescription>
                                         </DialogHeader>
                                         <FormField
-                                            control={form.control}
+                                            control={addWishlistForm.control}
                                             name="title"
                                             render={({ field }) => (
                                                 <FormItem className="mb-2 mt-3">
@@ -316,7 +518,7 @@ const Profile = ({ isLoggedIn, setIsLoggedIn, router }) => {
                                         />
 
                                         <FormField
-                                            control={form.control}
+                                            control={addWishlistForm.control}
                                             name='priority'
                                             render={({ field }) => (
                                                 <FormItem className="mb-2 mt-3">
@@ -343,7 +545,7 @@ const Profile = ({ isLoggedIn, setIsLoggedIn, router }) => {
                                         />
 
                                         <FormField
-                                            control={form.control}
+                                            control={addWishlistForm.control}
                                             name="description"
                                             render={({ field }) => (
                                                 <FormItem className="mb-2 mt-3">
@@ -360,7 +562,7 @@ const Profile = ({ isLoggedIn, setIsLoggedIn, router }) => {
                                         <Separator className="mt-5 mb-3" />
                                         <FormLabel className="font-bold">Links</FormLabel>
                                         <div className="flex items-center">
-                                            <Input className="mt-2" control={form.control} value={inputLink} onChange={handleInputLinkChange} placeholder="Enter a store link here" />
+                                            <Input className="mt-2" control={addWishlistForm.control} value={inputLink} onChange={handleInputLinkChange} placeholder="Enter a store link here" />
                                             <Button type="button" variant="outline" className="mt-2 ms-2" onClick={addToLinks}>
                                                 Add link
                                             </Button>

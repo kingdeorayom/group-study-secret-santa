@@ -176,7 +176,7 @@ const ParticipantPicker = () => {
                                                     {`${recipientData.codeName}`}
                                                     <div>
                                                         <Label className="font-light text-xs opacity-50">
-                                                            {`Picker ID: ${userData.userId}`}
+                                                            {`Picker ID (You): ${userData.userId}`}
                                                         </Label>
                                                     </div>
                                                 </CardTitle>
@@ -255,9 +255,19 @@ const ParticipantPicker = () => {
                             </div>
                         </CardHeader>
                         <Separator />
-                        <CardFooter className="flex justify-between mt-5">
+                        <CardFooter className="flex justify-between mt-5 pb-2">
                             <Label className="font-light text-xs">
                                 {`Feel free to periodically check the app while the event hasn't started, as ${recipientData.codeName} might update their wishlist if they haven't done so already.`}
+                            </Label>
+                        </CardFooter>
+                        <CardFooter className="flex justify-between pb-2">
+                            <Label className="font-light text-xs">
+                                {`Also note that the cost of wishlist items may vary, and not all items will amount to PHP 1,000. Participants have the flexibility to divide the agreed-upon price among multiple items as needed.`}
+                            </Label>
+                        </CardFooter>
+                        <CardFooter className="flex justify-between">
+                            <Label className="font-light text-xs">
+                                {`Make sure to read and understand the item's description for reference.`}
                             </Label>
                         </CardFooter>
                     </Card>

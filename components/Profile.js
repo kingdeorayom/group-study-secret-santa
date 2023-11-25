@@ -341,17 +341,15 @@ const Profile = ({ isLoggedIn, setIsLoggedIn, router }) => {
                             </CardTitle>
                             <CardDescription>
                                 {userData.name}
-                                {/* <div>
-                                    <Label className="font-light text-xs opacity-50">
-                                        {`Picker ID: ${userData.userId}`}
-                                    </Label>
-                                </div> */}
+                                <Label className="font-light text-xs opacity-70 block mt-1">
+                                    {`Your Participant ID: ${userData.userId}`}
+                                </Label>
                             </CardDescription>
 
 
                             <Dialog>
                                 <DialogTrigger asChild>
-                                    <Label className="font-normal underline text-xs cursor-pointer mt-2">
+                                    <Label className="font-normal underline text-xs cursor-pointer mt-3">
                                         Change password
                                     </Label>
                                 </DialogTrigger>

@@ -428,7 +428,7 @@ const Profile = ({ isLoggedIn, setIsLoggedIn, router }) => {
                                             <Separator className="mt-5 mb-3" />
 
                                             <DialogFooter className="mt-6">
-                                                <Button type="submit" disabled={isPasswordChanging}>
+                                                <Button type="submit" className="w-full" disabled={isPasswordChanging}>
                                                     {
                                                         isPasswordChanging ? (
                                                             <>

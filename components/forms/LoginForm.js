@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { Loader2, XCircle } from "lucide-react"
+import { Loader2, Terminal, XCircle } from "lucide-react"
 import { useState } from "react"
 import { Checkbox } from "@/components/ui/checkbox"
 import axios from "axios"
@@ -15,8 +15,10 @@ import { useRouter } from 'next/navigation'
 import { useAuth } from "@/context/AuthContext"
 import Link from "next/link"
 import { Label } from "../ui/label"
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog"
+import { Separator } from "../ui/separator"
 
-const FormSchema = z.object({
+const LoginSchema = z.object({
     codeName: z.string().min(1, {
         message: "Code name is required.",
     }),
@@ -25,29 +27,69 @@ const FormSchema = z.object({
     }),
 })
 
+const ForgotPasswordSchema = z.object({
+    codeName: z.string().min(1, {
+        message: "Code name is required.",
+    }),
+    newPassword: z.string().min(8, {
+        message: "Password must be at least 8 characters.",
+    }),
+    confirmPassword: z.string().min(8, {
+        message: "Password must be at least 8 characters.",
+    }),
+}).superRefine(({ confirmPassword, newPassword }, ctx) => {
+    if (confirmPassword !== newPassword) {
+        ctx.addIssue({
+            code: "custom",
+            message: "New password and confirm password do not match.",
+            path: ['confirmPassword']
+        });
+    }
+})
+
 const LoginForm = () => {
 
     const router = useRouter()
 
+    const currentDate = new Date();
+    const targetDate = new Date('November 29, 2023');
+
+    const isButtonDisabled = currentDate > targetDate;
+
     const { setIsLoggedIn, updateUserData } = useAuth();
 
-    const form = useForm({
-        resolver: zodResolver(FormSchema),
+    const loginForm = useForm({
+        resolver: zodResolver(LoginSchema),
         defaultValues: {
             codeName: "",
             password: "",
         },
     })
 
+    const forgotPasswordForm = useForm({
+        resolver: zodResolver(ForgotPasswordSchema),
+        defaultValues: {
+            codeName: "",
+            newPassword: "",
+            confirmPassword: "",
+        },
+    })
+
+    const { reset: resetForgotPassword } = forgotPasswordForm
+
     const [isPasswordShown, setIsPasswordShown] = useState(false);
     const [loginError, setLoginError] = useState(null);
-    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isLoggingIn, setIsLoggingIn] = useState(false);
     const [fetchStatus, setFetchStatus] = useState(false);
+
+    const [isPasswordChanging, setIsPasswordChanging] = useState(false);
+    const [forgotPasswordError, setForgotPasswordError] = useState(null);
+    const [isChangePasswordSuccess, setIsChangePasswordSuccess] = useState(null);
 
     const togglePassword = () => setIsPasswordShown(!isPasswordShown);
 
     const onSubmit = async (data) => {
-        setIsSubmitting(true);
+        setIsLoggingIn(true);
         let timeoutId;
 
         try {
@@ -67,7 +109,7 @@ const LoginForm = () => {
 
             if (response.status === 200) {
                 setLoginError(null);
-                setIsSubmitting(false);
+                setIsLoggingIn(false);
                 localStorage.setItem('secret-santa-login-token', response.data.token);
                 localStorage.setItem('secret-santa-user-data', JSON.stringify(response.data.user));
                 const storedUserData = JSON.parse(localStorage.getItem('secret-santa-user-data'));
@@ -82,12 +124,59 @@ const LoginForm = () => {
             } else {
                 setLoginError("An error occurred during login.");
             }
-            setIsSubmitting(false);
+            setIsLoggingIn(false);
         } finally {
             clearTimeout(timeoutId);
             setFetchStatus(false);
-            setIsSubmitting(false);
+            setIsLoggingIn(false);
         }
+    }
+
+    const onForgotPasswordChange = async (data) => {
+
+        setIsPasswordChanging(true)
+
+        let timeoutId;
+
+        setTimeout(async () => {
+            try {
+
+                timeoutId = setTimeout(() => {
+                    setFetchStatus(true);
+                }, 5000);
+
+                const response = await axios.post(
+                    `${process.env.NEXT_PUBLIC_API_URL}/users/reset-password`,
+                    data
+                );
+
+                // Clear the timer as the response is received within 5 seconds
+                clearTimeout(timeoutId);
+
+                if (response.status === 200) {
+                    setIsPasswordChanging(false)
+                    setForgotPasswordError(null);
+                    setIsChangePasswordSuccess("Password changed successfully.")
+                    resetForgotPassword()
+                } else {
+                    setIsPasswordChanging(false)
+                    console.error('Error changing password');
+                }
+            } catch (error) {
+
+                if (error.response && error.response.data) {
+                    setForgotPasswordError(error.response.data.message);
+                } else {
+                    setForgotPasswordError("An error occurred while changing your password");
+                }
+                setIsPasswordChanging(false)
+                // console.error('Error adding wishlist item', error);
+            } finally {
+                clearTimeout(timeoutId);
+                setFetchStatus(false);
+            }
+        }, 1000);
+
     }
 
     return (
@@ -103,10 +192,10 @@ const LoginForm = () => {
                 )
             }
 
-            <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)}>
+            <Form {...loginForm}>
+                <form onSubmit={loginForm.handleSubmit(onSubmit)}>
                     <FormField
-                        control={form.control}
+                        control={loginForm.control}
                         name="codeName"
                         render={({ field }) => (
                             <FormItem className="mb-4">
@@ -122,7 +211,7 @@ const LoginForm = () => {
                         )}
                     />
                     <FormField
-                        control={form.control}
+                        control={loginForm.control}
                         name="password"
                         render={({ field }) => (
                             <FormItem className="mb-3">
@@ -150,9 +239,9 @@ const LoginForm = () => {
                         </div>
                     </div>
 
-                    <Button type="submit" className="w-full mt-6 mb-6" disabled={isSubmitting}>
+                    <Button type="submit" className="w-full mt-6 mb-4" disabled={isLoggingIn}>
                         {
-                            isSubmitting ? (
+                            isLoggingIn ? (
                                 <>
                                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                                     <Label>{fetchStatus ? 'Taking longer than usual. Please wait...' : 'Logging in'}</Label>
@@ -163,16 +252,134 @@ const LoginForm = () => {
                         }
                     </Button>
 
-                    {
-                        fetchStatus && (
-                            <>
-                                <p className="text-xs text-center mb-3">{"Logging in is taking longer than usual. This could be due to the speed of your internet connection or a server problem in general. Please don't close the page and wait patiently."}</p>
-                                <p className="text-xs text-center mb-3">For the meantime, why not <Link href="https://speedtest.net" target="_blank" className="text-blue-500 underline">test your internet connection speed</Link>?</p>
-                            </>
-                        )
-                    }
                 </form>
+
             </Form>
+
+            <div className="text-center mb-20">
+                <Dialog>
+                    <DialogTrigger>
+                        <Label className="font-normal underline text-xs cursor-pointer">
+                            I forgot my password
+                        </Label>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[425px]">
+                        {
+                            isButtonDisabled ?
+                                <DialogHeader>
+                                    <DialogTitle>Forgot your password?</DialogTitle>
+                                    <DialogDescription>
+                                        Contact the developer for assistance.
+                                    </DialogDescription>
+                                </DialogHeader> :
+                                <Form {...forgotPasswordForm}>
+                                    <form onSubmit={forgotPasswordForm.handleSubmit(onForgotPasswordChange)}>
+                                        <DialogHeader>
+                                            <DialogTitle>Forgot your password?</DialogTitle>
+                                            <DialogDescription>
+                                                Enhance account security with a strong, unique password. And make sure to remember it the next time!
+                                            </DialogDescription>
+                                        </DialogHeader>
+                                        {
+                                            forgotPasswordError && (
+                                                <Alert className="mt-5 mb-5">
+                                                    <XCircle className="h-4 w-4" />
+                                                    <AlertTitle className="font-bold">Oops!</AlertTitle>
+                                                    <AlertDescription className="">{forgotPasswordError}</AlertDescription>
+                                                </Alert>
+                                            )
+                                        }
+                                        {
+                                            isChangePasswordSuccess && (
+                                                <Alert className="mt-5 mb-5">
+                                                    <Terminal className="h-4 w-4" />
+                                                    <AlertTitle className="font-bold">Success!</AlertTitle>
+                                                    <AlertDescription className="">{isChangePasswordSuccess}</AlertDescription>
+                                                </Alert>
+                                            )
+                                        }
+                                        <FormField
+                                            control={forgotPasswordForm.control}
+                                            name="codeName"
+                                            render={({ field }) => (
+                                                <FormItem className="mb-2 mt-3">
+                                                    <FormLabel className="font-bold">Code Name</FormLabel>
+                                                    <FormControl>
+                                                        <Input placeholder="Enter your code name" {...field} />
+                                                    </FormControl>
+                                                    <FormDescription className="text-xs mx-1">
+                                                        Make sure to enter the code name exactly as you did during registration. In case of forgotten code name, ask Serking.
+                                                    </FormDescription>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+
+                                        <FormField
+                                            control={forgotPasswordForm.control}
+                                            name="newPassword"
+                                            render={({ field }) => (
+                                                <FormItem className="mb-2 mt-3">
+                                                    <FormLabel className="font-bold">New Password</FormLabel>
+                                                    <FormControl>
+                                                        <Input placeholder="Enter your new password" {...field} />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+
+                                        <FormField
+                                            control={forgotPasswordForm.control}
+                                            name="confirmPassword"
+                                            render={({ field }) => (
+                                                <FormItem className="mb-2 mt-3">
+                                                    <FormLabel className="font-bold">Confirm Password</FormLabel>
+                                                    <FormControl>
+                                                        <Input placeholder="Re-enter your new password" {...field} />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+
+                                        <Separator className="mt-5 mb-3" />
+
+                                        <FormDescription className="text-xs mx-1">
+                                            {"You won't be able to reset your password via code name once the participant picking has started. Please remember your password this time!"}
+                                        </FormDescription>
+
+                                        <DialogFooter className="mt-6">
+                                            <Button type="submit" className="w-full" disabled={isPasswordChanging}>
+                                                {
+                                                    isPasswordChanging ? (
+                                                        <>
+                                                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                                            <Label>{fetchStatus ? 'Taking longer than usual. Please wait...' : 'Updating your password'}</Label>
+                                                        </>
+                                                    ) : (
+                                                        'Submit'
+                                                    )
+                                                }
+                                            </Button>
+                                        </DialogFooter>
+                                    </form>
+                                </Form>
+                        }
+                    </DialogContent>
+
+                </Dialog>
+            </div>
+
+            {
+                fetchStatus && (
+                    <>
+                        <p className="text-xs text-center mb-3">{"Logging in is taking longer than usual. This could be due to the speed of your internet connection or a server problem in general. Please don't close the page and wait patiently."}</p>
+                        <p className="text-xs text-center mb-3">For the meantime, why not <Link href="https://speedtest.net" target="_blank" className="text-blue-500 underline">test your internet connection speed</Link>?</p>
+                    </>
+                )
+            }
+
         </div>
     )
 }

@@ -225,7 +225,7 @@ const RegistrationForm = () => {
                                 </>
                             ) : (
                                 // 'Register'
-                                'Registration temporarily disabled by Serking'
+                                'Registration disabled by Serking'
                             )
                         }
                     </Button>

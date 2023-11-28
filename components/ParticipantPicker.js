@@ -267,7 +267,7 @@ const ParticipantPicker = () => {
                         </CardFooter>
                         <CardFooter className="flex justify-between">
                             <Label className="font-light text-xs">
-                                {`Make sure to read and understand the item's description for reference.`}
+                                {`Make sure to read and understand each item's description for reference.`}
                             </Label>
                         </CardFooter>
                     </Card>

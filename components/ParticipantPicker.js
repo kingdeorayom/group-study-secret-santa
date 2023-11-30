@@ -172,10 +172,8 @@ const ParticipantPicker = () => {
                                             </div>
                                         ) : (
                                             recipientData && recipientData.codeName && (
-                                                <CardTitle className="mb-1">
-                                                    {recipientData.codeName.length > 15
-                                                        ? `${recipientData.codeName.slice(0, 15)}...`
-                                                        : recipientData.codeName}
+                                                <CardTitle className="mb-1 break-all">
+                                                    {`${recipientData.codeName}`}
                                                     <div>
                                                         <Label className="font-light text-xs opacity-50">
                                                             {`Picker ID (You): ${userData.userId}`}
@@ -245,12 +243,8 @@ const ParticipantPicker = () => {
                         <CardHeader>
                             <div className="flex justify-between items-center">
                                 <div>
-                                    <CardTitle className="">
-                                        {
-                                            recipientData.codeName === "Pqosudyxtquqooebrbrkcoxhsjshbeekbwlahxhxk" ?
-                                                `${recipientData.codeName.slice(0, 15)}...'s wishlist` :
-                                                `${recipientData.codeName}'s wishlist`
-                                        }
+                                    <CardTitle className="break-all">
+                                        {`${recipientData.codeName}'s wishlist`}
                                         <div>
                                             <Label className="font-light text-xs opacity-1">
                                                 {`Mutually agreed price: PHP 1,000.00`}

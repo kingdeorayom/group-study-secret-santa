@@ -16,7 +16,7 @@ const Footer = () => {
                 .
             </h6>
             {/* <p className='font-light text-xs'>&copy; 2023 Serking de Orayom</p> */}
-            <p className='font-light text-xs'>Notify me immediately if you come across any bugs. Thank you!</p>
+            <p className='font-light text-xs'>Notify me immediately if you come across any bugs.</p>
             <p className='font-light text-xs'>&copy; {new Date().getFullYear()} Serking de Orayom</p>
         </footer>
     )

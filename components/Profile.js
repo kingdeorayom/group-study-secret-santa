@@ -337,7 +337,11 @@ const Profile = ({ isLoggedIn, setIsLoggedIn, router }) => {
                     <div className="flex justify-between items-center">
                         <div>
                             <CardTitle className="mb-1">
-                                {userData.codeName}
+                                {
+                                    userData.codeName === "Pqosudyxtquqooebrbrkcoxhsjshbeekbwlahxhxk" ?
+                                        `${userData.codeName.slice(0, 15)}...` :
+                                        userData.codeName
+                                }
                             </CardTitle>
                             <CardDescription>
                                 {userData.name}

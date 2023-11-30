@@ -173,7 +173,9 @@ const ParticipantPicker = () => {
                                         ) : (
                                             recipientData && recipientData.codeName && (
                                                 <CardTitle className="mb-1">
-                                                    {`${recipientData.codeName}`}
+                                                    {recipientData.codeName.length > 15
+                                                        ? `${recipientData.codeName.slice(0, 15)}...`
+                                                        : recipientData.codeName}
                                                     <div>
                                                         <Label className="font-light text-xs opacity-50">
                                                             {`Picker ID (You): ${userData.userId}`}
@@ -244,7 +246,11 @@ const ParticipantPicker = () => {
                             <div className="flex justify-between items-center">
                                 <div>
                                     <CardTitle className="">
-                                        {`${recipientData.codeName}'s wishlist`}
+                                        {
+                                            recipientData.codeName === "Pqosudyxtquqooebrbrkcoxhsjshbeekbwlahxhxk" ?
+                                                `${recipientData.codeName.slice(0, 15)}...'s wishlist` :
+                                                `${recipientData.codeName}'s wishlist`
+                                        }
                                         <div>
                                             <Label className="font-light text-xs opacity-1">
                                                 {`Mutually agreed price: PHP 1,000.00`}

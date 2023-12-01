@@ -54,7 +54,7 @@ const ChangePasswordSchema = z.object({
 
 const Profile = ({ isLoggedIn, setIsLoggedIn, router }) => {
 
-    const targetDate = new Date('2023-12-02');
+    const targetDate = new Date('2023-12-03');
     const currentDate = new Date();
     const isAfterTargetDate = currentDate < targetDate;
 

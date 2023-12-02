@@ -682,7 +682,7 @@ const Profile = ({ isLoggedIn, setIsLoggedIn, router }) => {
                                                 <Badge variant="outline">{`${item.priority} Priority`}</Badge>
                                                 <p className="font-semibold mt-2 mb-2">{`${item.title}`}</p>
                                                 <p className="text-xs mt-2 mb-1 text-slate-500 font-semibold me-1">Additional note for this item:</p>
-                                                <CardDescription className="text-xs text-slate-400">
+                                                <CardDescription className="text-xs text-slate-400 whitespace-pre-wrap overflow-wrap-break-word">
                                                     {item.description ? item.description : "No information provided"}
                                                 </CardDescription>
                                                 <Separator className="mt-4 mb-4" />

@@ -473,7 +473,22 @@ const Profile = ({ isLoggedIn, setIsLoggedIn, router }) => {
                         </div>
 
                         <Dialog open={isAddWishlistDialogOpen} onOpenChange={setIsAddWishlistDialogOpen}>
-                            {
+                            <DialogTrigger asChild>
+                                <Button
+                                    className="ms-8"
+                                    variant="outline"
+                                    onClick={() => {
+                                        setIsAddWishlistDialogOpen(true)
+                                        resetAddWishlist()
+                                        setInputLink("")
+                                        setLinks([])
+                                    }
+                                    }
+                                >
+                                    Add item
+                                </Button>
+                            </DialogTrigger>
+                            {/* {
                                 isAfterTargetDate ? (
                                     <DialogTrigger asChild>
                                         <Button
@@ -491,7 +506,7 @@ const Profile = ({ isLoggedIn, setIsLoggedIn, router }) => {
                                         </Button>
                                     </DialogTrigger>
                                 ) : null
-                            }
+                            } */}
                             <DialogContent className="sm:max-w-[425px]">
                                 <Form {...addWishlistForm}>
                                     <form onSubmit={addWishlistForm.handleSubmit(onSubmitWishlist)}>

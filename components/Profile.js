@@ -477,6 +477,7 @@ const Profile = ({ isLoggedIn, setIsLoggedIn, router }) => {
                                 <Button
                                     className="ms-8"
                                     variant="outline"
+                                    disabled
                                     onClick={() => {
                                         setIsAddWishlistDialogOpen(true)
                                         resetAddWishlist()
@@ -488,25 +489,6 @@ const Profile = ({ isLoggedIn, setIsLoggedIn, router }) => {
                                     Add item
                                 </Button>
                             </DialogTrigger>
-                            {/* {
-                                isAfterTargetDate ? (
-                                    <DialogTrigger asChild>
-                                        <Button
-                                            className="ms-8"
-                                            variant="outline"
-                                            onClick={() => {
-                                                setIsAddWishlistDialogOpen(true)
-                                                resetAddWishlist()
-                                                setInputLink("")
-                                                setLinks([])
-                                            }
-                                            }
-                                        >
-                                            Add item
-                                        </Button>
-                                    </DialogTrigger>
-                                ) : null
-                            } */}
                             <DialogContent className="sm:max-w-[425px]">
                                 <Form {...addWishlistForm}>
                                     <form onSubmit={addWishlistForm.handleSubmit(onSubmitWishlist)}>
